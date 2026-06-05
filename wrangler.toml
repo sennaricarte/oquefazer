@@ -1,0 +1,5 @@
+# Cloudflare Pages — site estático Astro (output: dist)
+# Usado se o projeto for criado via Workers/Pages com deploy por Git.
+name = "oquefazer"
+compatibility_date = "2024-09-23"
+pages_build_output_dir = "./dist"

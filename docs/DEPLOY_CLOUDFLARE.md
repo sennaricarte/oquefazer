@@ -153,8 +153,23 @@ A Cloudflare detecta o push, roda `npm run build` e publica `dist/`.
 
 ## 7. Problemas comuns
 
+### Build falha em ~1 minuto com `wrangler` nos logs
+
+Se aparecer **"Running custom build 'npm run build' failed"** e referência a `wrangler-*.log`:
+
+1. **Node.js** — o projeto exige Node 22. No painel, adicione `NODE_VERSION=22` **ou** use o arquivo `.node-version` já no repositório.
+2. **Tipo de projeto** — para site estático Astro, use **Pages** (não Workers com SSR):
+   - **Build command:** `npm run build`
+   - **Build output directory:** `dist`
+   - **Deploy command:** deixe **vazio** (não use `npx wrangler deploy`)
+3. **Install command** (avançado, opcional): `npm ci` em vez de `npm install`
+4. O repositório inclui `wrangler.toml` com `pages_build_output_dir = "./dist"` para fluxos que exigem Wrangler.
+
+> Build local leva **~10 min** (280 posts + Sharp). Na Cloudflare, espere 8–15 min. Se falhar antes de 2 min, quase sempre é Node ou comando de deploy errado.
+
 | Sintoma | Causa provável | Solução |
 |---------|----------------|---------|
+| Build falha em < 2 min + wrangler no log | Node 18/20 ou deploy command errado | `NODE_VERSION=22`, deploy command vazio |
 | Build falha no Sharp | Node antigo | `NODE_VERSION=22` |
 | Sitemap com URL errada | `SITE_URL` ausente | Definir `https://oquefaz.app.br` e redeploy |
 | Canonical `meusite.com.br` | Fallback do código | Mesmo: configurar `SITE_URL` |
