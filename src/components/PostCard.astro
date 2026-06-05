@@ -27,6 +27,9 @@ const formattedDate = pubDate.toLocaleDateString('pt-BR', {
 				alt={heroImageAlt ?? title}
 				width={640}
 				height={360}
+				widths={[400, 560, 640]}
+				sizes="(min-width: 768px) 640px, 100vw"
+				quality={50}
 				loading="lazy"
 			/>
 		</a>

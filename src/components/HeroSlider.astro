@@ -33,8 +33,11 @@ if (slides.length === 0) {
 						<OptimizedImage
 							src={post.data.heroImage}
 							alt={post.data.heroImageAlt ?? post.data.title}
-							width={1200}
-							height={560}
+							width={960}
+							height={448}
+							widths={[480, 640, 800, 960]}
+							sizes="(min-width: 900px) 55vw, 100vw"
+							quality={index === 0 ? 62 : 50}
 							loading={index === 0 ? 'eager' : 'lazy'}
 							fetchpriority={index === 0 ? 'high' : 'auto'}
 						/>

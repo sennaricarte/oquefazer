@@ -2,7 +2,6 @@
 import { defineConfig } from 'astro/config';
 import { loadEnv } from 'vite';
 
-import tailwindcss from '@tailwindcss/vite';
 import mdx from '@astrojs/mdx';
 import partytown from '@astrojs/partytown';
 import { createSitemapIntegration } from './sitemap-integration.mjs';
@@ -22,15 +21,11 @@ export default defineConfig({
 
 	compressHTML: true,
 
+	build: {
+		inlineStylesheets: 'always',
+	},
+
 	trailingSlash: 'never',
-
-	prefetch: {
-		prefetchAll: true,
-	},
-
-	vite: {
-		plugins: [tailwindcss()],
-	},
 
 	image: {
 		service: {

@@ -10,6 +10,12 @@ interface Props {
 	loading?: 'lazy' | 'eager';
 	fetchpriority?: 'high' | 'low' | 'auto';
 	class?: string;
+	/** Larguras geradas no srcset — alinhar ao tamanho máximo exibido na tela. */
+	widths?: number[];
+	/** Atributo sizes para o navegador escolher o arquivo certo do srcset. */
+	sizes?: string;
+	/** 0–100; padrão mais baixo em lazy para reduzir peso. */
+	quality?: 'low' | 'mid' | 'high' | number;
 }
 
 const {
@@ -20,13 +26,28 @@ const {
 	loading = 'lazy',
 	fetchpriority,
 	class: className,
+	widths,
+	sizes,
+	quality,
 } = Astro.props;
 
 if (!alt?.trim()) {
 	throw new Error('OptimizedImage: o atributo alt é obrigatório.');
 }
 
-const widths = [400, 800, 1200];
+function buildWidths(displayWidth: number): number[] {
+	const candidates = [
+		Math.round(displayWidth * 0.75),
+		displayWidth,
+		Math.round(displayWidth * 1.25),
+	];
+	return [...new Set(candidates.filter((w) => w >= 160))].sort((a, b) => a - b);
+}
+
+const resolvedWidths = widths ?? buildWidths(width);
+const resolvedSizes = sizes ?? `(max-width: ${width}px) 100vw, ${width}px`;
+const resolvedQuality = quality ?? (loading === 'eager' ? 62 : 50);
+
 const aspectRatio = `${width} / ${height}`;
 const isSvg =
 	typeof src === 'string'
@@ -52,11 +73,12 @@ const isSvg =
 		<Picture
 			src={src}
 			alt={alt}
-			widths={widths}
+			widths={resolvedWidths}
+			sizes={resolvedSizes}
 			formats={['avif', 'webp']}
 			width={width}
 			height={height}
-			quality="mid"
+			quality={resolvedQuality}
 			loading={loading}
 			fetchpriority={fetchpriority}
 			pictureAttributes={{ class: 'optimized-image__picture' }}
