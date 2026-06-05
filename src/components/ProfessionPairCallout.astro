@@ -1,0 +1,59 @@
+---
+import type { BlogEntry } from '../utils/blog';
+import { getPostPath } from '../utils/blog';
+import { resolveContentType } from '../utils/clusters';
+
+interface Props {
+	post: BlogEntry;
+	related: BlogEntry;
+}
+
+const { post, related } = Astro.props;
+const type = resolveContentType(post);
+const relatedType = resolveContentType(related);
+const relatedPath = getPostPath(related);
+
+const isFicha = type === 'ficha';
+const isGuia = type === 'guia';
+---
+
+<aside class="pair-callout" aria-label="Conteúdo relacionado da mesma profissão">
+	{isFicha && (relatedType === 'guia' || relatedType === 'profissao') ? (
+		<p>
+			<strong>Quer se aprofundar?</strong> Esta é a ficha resumida. Leia o{' '}
+			<a href={relatedPath}>{related.data.title}</a> — com dia a dia, formação detalhada, salário e FAQ.
+		</p>
+	) : isGuia && relatedType === 'ficha' ? (
+		<p>
+			<strong>Resumo rápido:</strong> prefere uma visão em poucos minutos? Veja a{' '}
+			<a href={relatedPath}>ficha da profissão — {related.data.title.replace(/ — O Que Faz.*/, '')}</a>.
+		</p>
+	) : (
+		<p>
+			<strong>Veja também:</strong> <a href={relatedPath}>{related.data.title}</a> — outro ângulo sobre a
+			mesma profissão, sem repetir conteúdo.
+		</p>
+	)}
+</aside>
+
+<style>
+	.pair-callout {
+		margin: 0 0 1.75rem;
+		padding: 1rem 1.15rem;
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
+		border-left: 4px solid var(--color-accent);
+	}
+
+	.pair-callout p {
+		margin: 0;
+		font-size: 0.9375rem;
+		line-height: 1.55;
+		color: var(--color-text-soft);
+	}
+
+	.pair-callout a {
+		font-weight: 600;
+		color: var(--color-brand);
+	}
+</style>

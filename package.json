@@ -1,0 +1,47 @@
+{
+  "name": "oquefazer",
+  "type": "module",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "lint:seo": "node scripts/lint-seo.mjs",
+    "cleanup:post-seo": "node scripts/cleanup-post-seo.mjs",
+    "lint:images": "node scripts/lint-images.mjs",
+    "review:images": "node scripts/review-images.mjs",
+    "images:approve": "node scripts/images-approve.mjs",
+    "images:reject": "node scripts/images-reject.mjs",
+    "new:post": "node scripts/new-post.mjs",
+    "check:topic": "node scripts/check-topic.mjs",
+    "clusters:orphans": "node scripts/list-cluster-orphans.mjs",
+    "fetch:core-heroes": "node scripts/fetch-core-heroes.mjs",
+    "fetch:batch-heroes": "node scripts/fetch-batch-heroes.mjs",
+    "fetch:batch-heroes-3": "node scripts/fetch-batch-heroes-3.mjs",
+    "fetch:batch-heroes-4": "node scripts/fetch-batch-heroes-4.mjs",
+    "fetch:batch-heroes-5": "node scripts/fetch-batch-heroes-5.mjs",
+    "import:site": "node scripts/import-from-site.mjs",
+    "import:oquefaz": "node scripts/import-oquefaz.mjs",
+    "generate:favicon": "node scripts/generate-favicon.mjs",
+    "fetch:image": "node scripts/fetch-stock-image.mjs"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^6.0.2",
+    "@astrojs/partytown": "^2.1.7",
+    "@astrojs/sitemap": "^3.7.3",
+    "@tailwindcss/vite": "^4.3.0",
+    "astro": "^6.4.4",
+    "fuse.js": "^7.4.1",
+    "sharp": "^0.34.5",
+    "tailwindcss": "^4.3.0"
+  },
+  "devDependencies": {
+    "node-html-parser": "^7.1.0",
+    "png-to-ico": "^3.0.1",
+    "turndown": "^7.2.4"
+  }
+}

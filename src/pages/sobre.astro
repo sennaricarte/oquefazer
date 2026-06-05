@@ -1,0 +1,456 @@
+---
+import { Image } from 'astro:assets';
+import { loadEnv } from 'vite';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import BreadcrumbNav from '../components/BreadcrumbNav.astro';
+import logo from '../assets/logo-o-que-faz.png';
+import { getPublishedPosts, getTagStats } from '../utils/blog';
+import { breadcrumbListJsonLd } from '../utils/schema';
+import { generateBreadcrumbs, generateOgImageUrl } from '../utils/seo';
+
+const { SITE_NAME, SITE_URL } = loadEnv(import.meta.env.MODE, process.cwd(), '');
+const site = Astro.site!;
+const blogName =
+	SITE_NAME || import.meta.env.PUBLIC_BLOG_NAME || import.meta.env.SITE_NAME || 'O Que Faz';
+const siteOrigin = SITE_URL || site.href;
+
+const posts = await getPublishedPosts();
+const tagStats = getTagStats(posts);
+const categoryCount = tagStats.filter(
+	({ tag }) => !['artigos', 'profissões', 'profissoes'].includes(tag.toLowerCase()),
+).length;
+
+const pageTitle = `Sobre nós — ${blogName}`;
+const pageDescription =
+	'Conheça o O Que Faz: nossa missão é ajudar você a entender profissões de verdade — rotina, formação, mercado e o que ninguém conta na faculdade.';
+
+const breadcrumbItems = generateBreadcrumbs('/sobre', site);
+const ogImage = generateOgImageUrl(pageTitle, pageDescription, siteOrigin);
+
+const aboutPageSchema = {
+	'@context': 'https://schema.org',
+	'@type': 'AboutPage',
+	name: pageTitle,
+	description: pageDescription,
+	url: new URL('/sobre', site).href,
+	inLanguage: 'pt-BR',
+	isPartOf: {
+		'@type': 'WebSite',
+		name: blogName,
+		url: site.href,
+	},
+	mainEntity: {
+		'@type': 'Organization',
+		name: blogName,
+		url: site.href,
+		description: pageDescription,
+		logo: new URL('/favicon.svg', site).href,
+	},
+};
+
+const pillars = [
+	{
+		title: 'Dia a dia real',
+		text: 'O que a profissão exige na prática: rotina, ambiente de trabalho, desafios e satisfações do ofício.',
+	},
+	{
+		title: 'Capacitação e formação',
+		text: 'Cursos, graduação, certificações e caminhos para entrar e evoluir na carreira escolhida.',
+	},
+	{
+		title: 'Mercado de trabalho',
+		text: 'Onde atuar, demanda, setores em alta e o que esperar ao buscar a primeira vaga ou recolocação.',
+	},
+	{
+		title: 'O que ninguém conta',
+		text: 'Detalhes que raramente aparecem na faculdade: pressão, ética, turnos, concorrência e bastidores.',
+	},
+];
+---
+
+<BaseLayout
+	title={pageTitle}
+	description={pageDescription}
+	canonicalURL="/sobre"
+	ogImage={ogImage}
+	ogType="website"
+	logoSrc="/favicon.svg"
+>
+	<Fragment slot="head">
+		<script type="application/ld+json" set:html={JSON.stringify(breadcrumbListJsonLd(breadcrumbItems))} />
+		<script type="application/ld+json" set:html={JSON.stringify(aboutPageSchema)} />
+	</Fragment>
+
+	<div class="about">
+		<div class="about__wrap page-wrap page-wrap--wide">
+			<BreadcrumbNav items={breadcrumbItems} />
+
+			<header class="about__hero">
+				<div class="about__hero-text">
+					<p class="about__eyebrow">Quem somos</p>
+					<h1>Sobre o {blogName}</h1>
+					<p class="about__lead">
+						A dúvida de &ldquo;o que vou ser quando crescer&rdquo; não precisa ser um peso. Somos um guia
+						editorial de profissões e carreiras no Brasil — feito para quem quer decidir com informação de
+						verdade, não com clichês desatualizados.
+					</p>
+					<div class="about__actions">
+						<a class="btn-primary" href="/blog">Explorar profissões</a>
+						<a class="link-brand about__secondary-link" href="/busca">Buscar por palavra-chave</a>
+					</div>
+				</div>
+				<figure class="about__hero-visual">
+					<Image
+						src={logo}
+						alt={`Logotipo ${blogName} — guia de profissões e carreiras`}
+						width={280}
+						height={280}
+						format="webp"
+						quality="mid"
+						class="about__logo"
+						loading="eager"
+						fetchpriority="high"
+					/>
+				</figure>
+			</header>
+
+			<ul class="about__stats" aria-label="Números do site">
+				<li>
+					<strong>{posts.length}+</strong>
+					<span>profissões e guias publicados</span>
+				</li>
+				<li>
+					<strong>{categoryCount}+</strong>
+					<span>áreas e categorias</span>
+				</li>
+				<li>
+					<strong>100%</strong>
+					<span>conteúdo em português (pt-BR)</span>
+				</li>
+			</ul>
+
+			<section class="about__section" aria-labelledby="missao-titulo">
+				<h2 id="missao-titulo">Nossa missão</h2>
+				<p>
+					Ser a ponte entre a dúvida e a decisão consciente. Acreditamos que escolher uma profissão exige
+					entender a rotina real, os desafios práticos e as oportunidades concretas de cada caminho — não só
+					o nome bonito no vestibular ou a promessa de um anúncio de curso.
+				</p>
+				<p>
+					Por isso publicamos fichas e artigos que respondem, de forma clara e acessível: <strong>o que faz</strong>,
+					como se forma, quais habilidades desenvolver e como está o mercado hoje.
+				</p>
+			</section>
+
+			<section class="about__section" aria-labelledby="pilares-titulo">
+				<h2 id="pilares-titulo">O que você encontra em cada profissão</h2>
+				<ul class="about__grid">
+					{pillars.map((item) => (
+						<li class="about__card">
+							<h3>{item.title}</h3>
+							<p>{item.text}</p>
+						</li>
+					))}
+				</ul>
+			</section>
+
+			<section class="about__section about__section--highlight" aria-labelledby="diferencial-titulo">
+				<h2 id="diferencial-titulo">Nosso diferencial</h2>
+				<ul class="about__list">
+					<li>
+						<strong>Atualidade:</strong> olhamos para o mercado de trabalho com foco em tendências e
+						profissões que ganham espaço — inclusive áreas ligadas à tecnologia, saúde digital e
+						sustentabilidade.
+					</li>
+					<li>
+						<strong>Clareza:</strong> linguagem direta, parágrafos curtos e estrutura fácil de escanear —
+						para estudantes, quem está em transição de carreira e curiosos sobre o futuro do trabalho.
+					</li>
+					<li>
+						<strong>Profundidade sem enrolação:</strong> conteúdo útil e original, alinhado às boas práticas de
+						SEO e à experiência do leitor (E-E-A-T), sem copiar guias genéricos de outros sites.
+					</li>
+				</ul>
+			</section>
+
+			<section class="about__section" aria-labelledby="publico-titulo">
+				<h2 id="publico-titulo">Para quem é o {blogName}</h2>
+				<ul class="about__audience">
+					<li>Estudantes do ensino médio e universitários em dúvida sobre qual carreira seguir.</li>
+					<li>Profissionais em transição que querem comparar ofícios antes de investir tempo e dinheiro.</li>
+					<li>Pais, educadores e orientadores que buscam material confiável para apoiar escolhas.</li>
+					<li>Quem só quer entender melhor o trabalho de alguém — ou o próprio — com mais contexto.</li>
+				</ul>
+			</section>
+
+			<p class="about__legal">
+				<a href="/contato">Contato</a>
+				·
+				<a href="/politica-de-privacidade">Privacidade</a>
+				·
+				<a href="/politica-de-cookies">Cookies</a>
+			</p>
+
+			<section class="about__cta" aria-labelledby="cta-titulo">
+				<h2 id="cta-titulo">Comece por aqui</h2>
+				<p>
+					Navegue pelas profissões, filtre por categoria ou use a busca para encontrar exatamente o que precisa.
+				</p>
+				<div class="about__cta-links">
+					<a class="btn-primary" href="/blog">Ver todas as profissões</a>
+					<a class="btn-secondary" href="/tags">Ver categorias</a>
+				</div>
+			</section>
+		</div>
+	</div>
+</BaseLayout>
+
+<style>
+	.about {
+		background: linear-gradient(180deg, var(--color-brand-subtle) 0%, var(--color-bg) 12rem);
+	}
+
+	.about__wrap {
+		padding-bottom: 4rem;
+	}
+
+	.about__hero {
+		display: grid;
+		gap: 2rem;
+		align-items: center;
+		margin-bottom: 2.5rem;
+	}
+
+	@media (min-width: 768px) {
+		.about__hero {
+			grid-template-columns: 1fr minmax(12rem, 16rem);
+		}
+	}
+
+	.about__eyebrow {
+		margin: 0 0 0.5rem;
+		font-size: 0.8125rem;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--color-brand);
+	}
+
+	.about__hero h1 {
+		margin: 0 0 1rem;
+		font-family: var(--font-display);
+		font-size: clamp(2rem, 5vw, 2.75rem);
+		line-height: 1.15;
+		color: var(--color-text);
+	}
+
+	.about__lead {
+		margin: 0 0 1.5rem;
+		max-width: 38rem;
+		font-size: 1.0625rem;
+		line-height: 1.65;
+		color: var(--color-text-soft);
+	}
+
+	.about__actions {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 1rem 1.5rem;
+	}
+
+	.about__secondary-link {
+		font-size: 0.9375rem;
+	}
+
+	.about__hero-visual {
+		margin: 0;
+		display: flex;
+		justify-content: center;
+	}
+
+	.about__logo {
+		width: min(100%, 14rem);
+		height: auto;
+		border-radius: 0.5rem;
+		box-shadow: 0 12px 40px rgba(15, 118, 110, 0.12);
+	}
+
+	.about__stats {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+		gap: 1rem;
+		margin: 0 0 3rem;
+		padding: 0;
+		list-style: none;
+	}
+
+	.about__stats li {
+		padding: 1.25rem 1rem;
+		text-align: center;
+		background: #fff;
+		border: 1px solid var(--color-border);
+	}
+
+	.about__stats strong {
+		display: block;
+		margin-bottom: 0.35rem;
+		font-family: var(--font-display);
+		font-size: 1.75rem;
+		color: var(--color-brand);
+	}
+
+	.about__stats span {
+		font-size: 0.8125rem;
+		color: var(--color-muted);
+		line-height: 1.4;
+	}
+
+	.about__section {
+		margin-bottom: 2.5rem;
+	}
+
+	.about__section h2 {
+		margin: 0 0 1rem;
+		font-family: var(--font-display);
+		font-size: clamp(1.35rem, 3vw, 1.65rem);
+		color: var(--color-text);
+	}
+
+	.about__section p {
+		margin: 0 0 1rem;
+		max-width: 42rem;
+		color: var(--color-text-soft);
+	}
+
+	.about__section p:last-child {
+		margin-bottom: 0;
+	}
+
+	.about__grid {
+		display: grid;
+		gap: 1rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	@media (min-width: 640px) {
+		.about__grid {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	.about__card {
+		padding: 1.25rem 1.35rem;
+		background: #fff;
+		border: 1px solid var(--color-border);
+		border-left: 4px solid var(--color-brand);
+	}
+
+	.about__card h3 {
+		margin: 0 0 0.5rem;
+		font-size: 1.0625rem;
+		font-weight: 700;
+		color: var(--color-text);
+	}
+
+	.about__card p {
+		margin: 0;
+		font-size: 0.9375rem;
+		line-height: 1.55;
+		color: var(--color-muted);
+	}
+
+	.about__section--highlight {
+		padding: 1.5rem 1.35rem;
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
+	}
+
+	.about__list,
+	.about__audience {
+		margin: 0;
+		padding-left: 1.25rem;
+		max-width: 42rem;
+		color: var(--color-text-soft);
+	}
+
+	.about__list li,
+	.about__audience li {
+		margin-bottom: 0.75rem;
+		line-height: 1.6;
+	}
+
+	.about__list li:last-child,
+	.about__audience li:last-child {
+		margin-bottom: 0;
+	}
+
+	.about__legal {
+		margin: 0 0 2rem;
+		font-size: 0.875rem;
+		text-align: center;
+		color: var(--color-muted);
+	}
+
+	.about__legal a {
+		font-weight: 600;
+		color: var(--color-brand);
+		text-decoration: none;
+	}
+
+	.about__legal a:hover {
+		text-decoration: underline;
+	}
+
+	.about__cta {
+		padding: 2rem 1.5rem;
+		text-align: center;
+		background: var(--color-dark);
+		color: #e2e8f0;
+	}
+
+	.about__cta h2 {
+		margin: 0 0 0.75rem;
+		font-family: var(--font-display);
+		font-size: 1.5rem;
+		color: #fff;
+	}
+
+	.about__cta p {
+		margin: 0 auto 1.5rem;
+		max-width: 32rem;
+		color: #94a3b8;
+	}
+
+	.about__cta-links {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 0.75rem 1rem;
+	}
+
+	.about__cta .btn-primary {
+		background: var(--color-accent);
+	}
+
+	.about__cta .btn-primary:hover {
+		background: #c2410c;
+	}
+
+	.btn-secondary {
+		display: inline-block;
+		padding: 0.65rem 1.25rem;
+		font-size: 0.875rem;
+		font-weight: 700;
+		text-decoration: none;
+		color: #fff;
+		border: 2px solid rgba(255, 255, 255, 0.35);
+	}
+
+	.btn-secondary:hover {
+		border-color: #fff;
+		color: #fff;
+	}
+</style>

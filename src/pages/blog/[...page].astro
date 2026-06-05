@@ -1,0 +1,137 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BreadcrumbNav from '../../components/BreadcrumbNav.astro';
+import CategoryTabs from '../../components/CategoryTabs.astro';
+import MagazineCard from '../../components/MagazineCard.astro';
+import MagazineShell from '../../components/MagazineShell.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import {
+	getBlogPagePath,
+	getPublishedPosts,
+	getTagStats,
+} from '../../utils/blog';
+import { calculateReadingTime } from '../../utils/readingTime';
+import { breadcrumbListJsonLd } from '../../utils/schema';
+import { generateBreadcrumbs } from '../../utils/seo';
+
+export async function getStaticPaths({ paginate }) {
+	const posts = await getPublishedPosts();
+	return paginate(posts, { pageSize: 10 });
+}
+
+const { page } = Astro.props;
+const site = Astro.site!;
+const blogName = import.meta.env.PUBLIC_BLOG_NAME ?? 'O Que Faz';
+const allPosts = await getPublishedPosts();
+const tagStats = getTagStats(allPosts);
+
+const canonicalPath = getBlogPagePath(page.currentPage);
+const pageTitle =
+	page.currentPage === 1 ? 'Profissões' : `Profissões — Página ${page.currentPage}`;
+const pageDescription =
+	page.currentPage === 1
+		? 'Lista completa de profissões e artigos do O Que Faz: formação, atuação, habilidades e mercado de trabalho.'
+		: `Página ${page.currentPage} do guia de profissões — explore mais carreiras e artigos especializados.`;
+
+const breadcrumbItems = generateBreadcrumbs(canonicalPath, site);
+---
+
+<BaseLayout
+	title={pageTitle}
+	description={pageDescription}
+	canonicalURL={canonicalPath}
+	ogImage="/og-default.png"
+	ogType="website"
+>
+	<Fragment slot="head">
+		{page.url.prev && <link rel="prev" href={page.url.prev} />}
+		{page.url.next && <link rel="next" href={page.url.next} />}
+		<script
+			type="application/ld+json"
+			set:html={JSON.stringify(breadcrumbListJsonLd(breadcrumbItems))}
+		/>
+	</Fragment>
+
+	<MagazineShell sidebarPosts={allPosts} tagStats={tagStats} siteName={blogName}>
+		<BreadcrumbNav items={breadcrumbItems} />
+
+		<header class="page-header">
+			<h1>{page.currentPage === 1 ? 'Guia de profissões' : `Página ${page.currentPage}`}</h1>
+			<p>
+				{page.total} guias publicados
+				{page.lastPage > 1 && (
+					<span>
+						{' '}
+						· Página {page.currentPage} de {page.lastPage}
+					</span>
+				)}
+			</p>
+		</header>
+
+		<SectionHeading title="Todas as profissões" subtitle="Navegue por categoria ou explore a lista completa" />
+		<CategoryTabs tagStats={tagStats} />
+
+		<section aria-label="Lista de profissões">
+			<div class="blog-list">
+				{page.data.map((post) => (
+					<MagazineCard
+						post={post}
+						variant="list"
+						readingMinutes={post.data.readingTime ?? calculateReadingTime(post.body ?? '')}
+					/>
+				))}
+			</div>
+		</section>
+
+		{page.lastPage > 1 && (
+			<nav class="pagination" aria-label="Paginação de profissões">
+				{page.url.prev ? (
+					<a href={page.url.prev} rel="prev">
+						← Anterior
+					</a>
+				) : (
+					<span />
+				)}
+				<span>
+					Página {page.currentPage} de {page.lastPage}
+				</span>
+				{page.url.next ? (
+					<a href={page.url.next} rel="next">
+						Próxima →
+					</a>
+				) : (
+					<span />
+				)}
+			</nav>
+		)}
+	</MagazineShell>
+</BaseLayout>
+
+<style>
+	.blog-list {
+		display: flex;
+		flex-direction: column;
+		gap: 1.5rem;
+	}
+
+	.pagination {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 1rem;
+		margin-top: 2.5rem;
+		padding-top: 1.5rem;
+		border-top: 2px solid var(--color-dark);
+		font-size: 0.9375rem;
+	}
+
+	.pagination a {
+		color: var(--color-accent);
+		text-decoration: none;
+		font-weight: 700;
+	}
+
+	.pagination a:hover {
+		text-decoration: underline;
+	}
+</style>

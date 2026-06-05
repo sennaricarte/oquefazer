@@ -1,0 +1,145 @@
+---
+import { loadEnv } from 'vite';
+import InstitutionalLayout from '../components/InstitutionalLayout.astro';
+
+const { SITE_NAME, SITE_URL } = loadEnv(import.meta.env.MODE, process.cwd(), '');
+const blogName =
+	SITE_NAME || import.meta.env.PUBLIC_BLOG_NAME || import.meta.env.SITE_NAME || 'O Que Faz';
+const siteUrl = (SITE_URL || Astro.site?.href || '').replace(/\/$/, '');
+const contactEmail =
+	import.meta.env.PUBLIC_CONTACT_EMAIL || 'contato@oquefaz.app.br';
+
+const pageTitle = `Política de Privacidade — ${blogName}`;
+const description =
+	'Saiba como o O Que Faz trata seus dados pessoais: coleta, uso, cookies, seus direitos na LGPD e como entrar em contato.';
+---
+
+<InstitutionalLayout
+	pageTitle={pageTitle}
+	description={description}
+	canonicalPath="/politica-de-privacidade"
+	heading="Política de Privacidade"
+	lead={`Esta política descreve como o site ${blogName} (${siteUrl}) coleta, usa e protege dados pessoais, em conformidade com a Lei Geral de Proteção de Dados (LGPD — Lei nº 13.709/2018).`}
+>
+	<Fragment slot="head">
+		<script
+			type="application/ld+json"
+			set:html={JSON.stringify({
+				'@context': 'https://schema.org',
+				'@type': 'WebPage',
+				name: pageTitle,
+				description,
+				url: `${siteUrl}/politica-de-privacidade`,
+				inLanguage: 'pt-BR',
+			})}
+		/>
+	</Fragment>
+
+	<h2>1. Quem somos (controlador)</h2>
+	<p>
+		O responsável pelo tratamento dos dados pessoais neste site é o projeto editorial <strong>{blogName}</strong>,
+		publicado em {siteUrl}, com foco em conteúdo informativo sobre profissões e carreiras.
+	</p>
+	<p>
+		Para exercer seus direitos ou tirar dúvidas sobre privacidade, utilize o e-mail indicado na página de{' '}
+		<a href="/contato">Contato</a>: <a href={`mailto:${contactEmail}`}>{contactEmail}</a>.
+	</p>
+
+	<h2>2. Quais dados coletamos</h2>
+	<p>Este site é majoritariamente estático e não exige cadastro para leitura. Podemos tratar:</p>
+	<ul>
+		<li>
+			<strong>Dados de navegação e uso:</strong> páginas visitadas, origem do acesso, tipo de dispositivo e navegador,
+			quando você utiliza ferramentas de medição de audiência (ver seção de cookies).
+		</li>
+		<li>
+			<strong>Dados técnicos de servidor:</strong> endereço IP, data e hora de acesso, registrados pelo provedor de
+			hospedagem para segurança e operação do site.
+		</li>
+		<li>
+			<strong>Dados que você enviar voluntariamente:</strong> nome, e-mail e conteúdo da mensagem, se nos contactar
+			por e-mail.
+		</li>
+	</ul>
+	<p>Não solicitamos dados sensíveis nem realizamos vendas de cadastro neste site.</p>
+
+	<h2>3. Finalidades e bases legais</h2>
+	<ul>
+		<li>
+			<strong>Medir audiência e melhorar o site</strong> — interesse legítimo e, quando aplicável, consentimento para
+			cookies não essenciais (art. 7º, IX e art. 8º da LGPD).
+		</li>
+		<li>
+			<strong>Garantir segurança e funcionamento</strong> — legítimo interesse e cumprimento de obrigações técnicas.
+		</li>
+		<li>
+			<strong>Responder solicitações de contato</strong> — execução de procedimento preliminar a pedido do titular.
+		</li>
+	</ul>
+
+	<h2>4. Compartilhamento com terceiros</h2>
+	<p>Podemos compartilhar dados apenas com:</p>
+	<ul>
+		<li>
+			<strong>Google Analytics</strong> (Google LLC), quando ativo em produção, para estatísticas agregadas de acesso.
+			Configuração com anonimização de IP quando disponível.
+		</li>
+		<li>
+			<strong>Provedor de hospedagem e CDN</strong>, necessários para exibir o site com segurança e desempenho.
+		</li>
+	</ul>
+	<p>Não vendemos nem alugamos seus dados pessoais.</p>
+
+	<h2>5. Retenção</h2>
+	<p>
+		Mantemos dados pelo tempo necessário às finalidades descritas ou exigido por lei. Logs de servidor e relatórios de
+		analytics seguem prazos técnicos usuais do provedor e da ferramenta de medição.
+	</p>
+
+	<h2>6. Seus direitos (LGPD)</h2>
+	<p>Você pode solicitar, mediante identificação:</p>
+	<ul>
+		<li>confirmação e acesso aos dados;</li>
+		<li>correção de dados incompletos ou desatualizados;</li>
+		<li>anonimização, bloqueio ou eliminação de dados desnecessários;</li>
+		<li>informação sobre compartilhamentos;</li>
+		<li>revogação do consentimento, quando o tratamento depender dele.</li>
+	</ul>
+	<p>
+		Envie o pedido para <a href={`mailto:${contactEmail}`}>{contactEmail}</a>. Responderemos em prazo razoável, conforme
+		a LGPD.
+	</p>
+
+	<h2>7. Segurança</h2>
+	<p>
+		Adotamos medidas técnicas e organizacionais compatíveis com um site editorial (HTTPS, provedores confiáveis,
+		minimização de coleta). Nenhum sistema é 100% invulnerável; em caso de incidente relevante, buscaremos cumprir os
+		deveres legais de comunicação.
+	</p>
+
+	<h2>8. Menores de idade</h2>
+	<p>
+		O conteúdo é informativo e voltado também a estudantes. Não coletamos intencionalmente dados de crianças sem base
+		legal adequada. Pais ou responsáveis podem contactar-nos para questões relacionadas a menores.
+	</p>
+
+	<h2>9. Alterações desta política</h2>
+	<p>
+		Podemos atualizar este texto para refletir mudanças no site ou na legislação. A data da última revisão aparece no
+		topo da página. Recomendamos revisitar periodicamente.
+	</p>
+
+	<h2>10. Cookies</h2>
+	<p>
+		O uso de cookies e tecnologias similares está detalhado na{' '}
+		<a href="/politica-de-cookies">Política de Cookies</a>.
+	</p>
+
+	<nav slot="related" aria-label="Links institucionais">
+		<ul class="institutional-links">
+			<li><a href="/politica-de-cookies">Política de Cookies</a></li>
+			<li><a href="/contato">Contato</a></li>
+			<li><a href="/sobre">Sobre nós</a></li>
+		</ul>
+	</nav>
+</InstitutionalLayout>

@@ -1,0 +1,183 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PostCard from '../../../components/PostCard.astro';
+import BreadcrumbNav from '../../../components/BreadcrumbNav.astro';
+import {
+	getAllTags,
+	getPostsByTag,
+	getPublishedPosts,
+	getTagPagePath,
+	getTagPath,
+	getTagsIndexPath,
+} from '../../../utils/blog';
+import { calculateReadingTime } from '../../../utils/readingTime';
+import { breadcrumbListJsonLd } from '../../../utils/schema';
+import { generateBreadcrumbs } from '../../../utils/seo';
+import { getClusterBySlug, getClusterPath, getClusterSlugForTag } from '../../../utils/clusters';
+
+export async function getStaticPaths({ paginate }) {
+	const posts = await getPublishedPosts();
+	const tags = getAllTags(posts);
+
+	return tags.flatMap((tag) => {
+		const tagPosts = getPostsByTag(posts, tag);
+		return paginate(tagPosts, {
+			pageSize: 10,
+			params: { tag },
+		});
+	});
+}
+
+const { page } = Astro.props;
+const tag = Astro.params.tag!;
+const site = Astro.site!;
+const canonicalPath = getTagPagePath(tag, page.currentPage);
+const pageTitle = `Profissões em ${tag}`;
+const description = `Confira ${page.total} guia${page.total === 1 ? '' : 's'} na categoria “${tag}”: o que faz, formação, habilidades e mercado de trabalho.`;
+
+const breadcrumbItems = generateBreadcrumbs(canonicalPath, site);
+const clusterSlug = getClusterSlugForTag(tag);
+const clusterHub = clusterSlug ? getClusterBySlug(clusterSlug) : undefined;
+---
+
+<BaseLayout
+	title={pageTitle}
+	description={description}
+	canonicalURL={canonicalPath}
+	ogImage="/og-default.png"
+	ogType="website"
+>
+	<Fragment slot="head">
+		{page.url.prev && <link rel="prev" href={page.url.prev} />}
+		{page.url.next && <link rel="next" href={page.url.next} />}
+		<script
+			type="application/ld+json"
+			set:html={JSON.stringify(breadcrumbListJsonLd(breadcrumbItems))}
+		/>
+	</Fragment>
+
+	<div class="page-wrap">
+		<BreadcrumbNav items={breadcrumbItems} />
+
+		<header class="page-header">
+			<h1>Profissões em {tag}</h1>
+			<p>
+				{page.total} guia{page.total === 1 ? '' : 's'}
+				{page.lastPage > 1 && (
+					<span>
+						{' '}
+						· Página {page.currentPage} de {page.lastPage}
+					</span>
+				)}
+			</p>
+			<p class="page-header__back">
+				<a class="link-brand" href={getTagsIndexPath()}>← Ver todas as categorias</a>
+			</p>
+			{clusterHub && (
+				<p class="page-header__hub">
+					<a class="btn-primary" href={getClusterPath(clusterHub.slug)}>
+						Ver hub editorial: {clusterHub.title} →
+					</a>
+				</p>
+			)}
+		</header>
+
+		<section aria-label={`Profissões na categoria ${tag}`}>
+			<div class="post-list">
+				{page.data.map((post) => (
+					<PostCard
+						post={post}
+						readingMinutes={post.data.readingTime ?? calculateReadingTime(post.body ?? '')}
+					/>
+				))}
+			</div>
+		</section>
+
+		{page.lastPage > 1 && (
+			<nav class="pagination" aria-label={`Paginação da tag ${tag}`}>
+				{page.url.prev ? (
+					<a href={page.url.prev} rel="prev">
+						← Anterior
+					</a>
+				) : (
+					<span />
+				)}
+				<span>
+					Página {page.currentPage} de {page.lastPage}
+				</span>
+				{page.url.next ? (
+					<a href={page.url.next} rel="next">
+						Próxima →
+					</a>
+				) : (
+					<span />
+				)}
+			</nav>
+		)}
+	</div>
+</BaseLayout>
+
+<style>
+	.page-wrap {
+		max-width: 48rem;
+		margin: 0 auto;
+		padding: 2rem 1rem 3rem;
+	}
+
+	.page-header h1 {
+		margin: 0 0 0.5rem;
+		font-size: clamp(1.5rem, 4vw, 2rem);
+		line-height: 1.2;
+	}
+
+	.page-header p {
+		margin: 0 0 0.5rem;
+		color: #64748b;
+	}
+
+	.page-header__back {
+		margin-top: 1rem;
+	}
+
+	.page-header__hub {
+		margin-top: 1.25rem;
+	}
+
+	.page-header__back a {
+		color: var(--color-brand);
+		text-decoration: none;
+		font-weight: 500;
+	}
+
+	.page-header__back a:hover {
+		text-decoration: underline;
+	}
+
+	.post-list {
+		display: flex;
+		flex-direction: column;
+		gap: 2rem;
+		margin-top: 2rem;
+	}
+
+	.pagination {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 1rem;
+		margin-top: 2.5rem;
+		padding-top: 1.5rem;
+		border-top: 1px solid #e2e8f0;
+		font-size: 0.9375rem;
+	}
+
+	.pagination a {
+		color: var(--color-brand);
+		text-decoration: none;
+		font-weight: 500;
+	}
+
+	.pagination a:hover {
+		text-decoration: underline;
+	}
+</style>

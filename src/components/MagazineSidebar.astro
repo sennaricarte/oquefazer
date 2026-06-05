@@ -1,0 +1,256 @@
+---
+import type { BlogEntry } from '../utils/blog';
+import type { TagStat } from '../utils/blog';
+import { getPostPath, getTagPath, getTagsIndexPath } from '../utils/blog';
+import { formatPostDateShort } from '../utils/post';
+
+interface Props {
+	recentPosts: BlogEntry[];
+	tagStats: TagStat[];
+	siteName: string;
+}
+
+const { recentPosts, tagStats, siteName } = Astro.props;
+const topCategories = tagStats
+	.filter(({ tag }) => !['artigos', 'profissões'].includes(tag.toLowerCase()))
+	.slice(0, 10);
+---
+
+<aside class="mag-sidebar" aria-label="Barra lateral">
+	<section class="mag-widget mag-widget--about">
+		<h2 class="mag-widget__title">Sobre o {siteName}</h2>
+		<p>
+			Guia editorial sobre profissões no Brasil: o que faz no dia a dia, formação, habilidades e
+			perspectivas de carreira — conteúdo claro para estudantes e profissionais.
+		</p>
+		<a class="mag-widget__link" href="/sobre">Conheça o projeto →</a>
+		<a class="mag-widget__link mag-widget__link--secondary" href="/blog">Explorar profissões →</a>
+	</section>
+
+	<section class="mag-widget">
+		<h2 class="mag-widget__title">Últimas publicações</h2>
+		<ul class="mag-widget__posts">
+			{recentPosts.slice(0, 4).map((post) => (
+				<li>
+					<time datetime={post.data.pubDate.toISOString()}>
+						{formatPostDateShort(post.data.pubDate)}
+					</time>
+					<a href={getPostPath(post)}>{post.data.title}</a>
+				</li>
+			))}
+		</ul>
+	</section>
+
+	{topCategories.length > 0 && (
+		<section class="mag-widget">
+			<h2 class="mag-widget__title">Categorias</h2>
+			<ul class="mag-widget__categories">
+				{topCategories.map(({ tag, count }) => (
+					<li>
+						<a href={getTagPath(tag)}>
+							<span>{tag}</span>
+							<span class="mag-widget__count">{String(count).padStart(2, '0')}</span>
+						</a>
+					</li>
+				))}
+			</ul>
+			<a class="mag-widget__link" href={getTagsIndexPath()}>Ver todas →</a>
+		</section>
+	)}
+
+	<section class="mag-widget mag-widget--newsletter">
+		<h2 class="mag-widget__title">Newsletter</h2>
+		<p>Receba novas profissões e artigos no seu e-mail.</p>
+		<form class="mag-newsletter" action="/busca" method="get" aria-label="Inscrição newsletter">
+			<label class="visually-hidden" for="newsletter-email">E-mail</label>
+			<input
+				id="newsletter-email"
+				type="email"
+				name="q"
+				placeholder="seu@email.com"
+				autocomplete="email"
+			/>
+			<button type="submit">Inscrever-se</button>
+		</form>
+		<p class="mag-widget__note">Por enquanto, use a busca para encontrar conteúdos.</p>
+	</section>
+</aside>
+
+<style>
+	.mag-sidebar {
+		display: flex;
+		flex-direction: column;
+		gap: 1.5rem;
+	}
+
+	.mag-widget {
+		padding: 1.25rem;
+		background: #fff;
+		border: 1px solid var(--color-border);
+	}
+
+	.mag-widget--about {
+		background: var(--color-dark);
+		color: #e2e8f0;
+		border-color: var(--color-dark);
+	}
+
+	.mag-widget--newsletter {
+		background: var(--color-brand-subtle);
+		border-color: #99f6e4;
+	}
+
+	.mag-widget__title {
+		position: relative;
+		margin: 0 0 1rem;
+		padding-bottom: 0.65rem;
+		font-family: var(--font-display);
+		font-size: 1.125rem;
+		line-height: 1.2;
+	}
+
+	.mag-widget__title::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		bottom: 0;
+		width: 2.5rem;
+		height: 3px;
+		background: var(--color-accent);
+	}
+
+	.mag-widget--about .mag-widget__title {
+		color: #fff;
+	}
+
+	.mag-widget--about p {
+		margin: 0 0 1rem;
+		font-size: 0.875rem;
+		line-height: 1.6;
+	}
+
+	.mag-widget__link {
+		font-size: 0.875rem;
+		font-weight: 600;
+		text-decoration: none;
+		color: #99f6e4;
+	}
+
+	.mag-widget__link:hover {
+		text-decoration: underline;
+	}
+
+	.mag-widget__link--secondary {
+		display: inline-block;
+		margin-top: 0.5rem;
+		color: #cbd5e1;
+	}
+
+	.mag-widget__posts {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+
+	.mag-widget__posts li {
+		display: flex;
+		flex-direction: column;
+		gap: 0.2rem;
+		padding-bottom: 1rem;
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	.mag-widget__posts li:last-child {
+		padding-bottom: 0;
+		border-bottom: 0;
+	}
+
+	.mag-widget__posts time {
+		font-size: 0.75rem;
+		color: var(--color-muted);
+	}
+
+	.mag-widget__posts a {
+		font-weight: 600;
+		font-size: 0.875rem;
+		line-height: 1.4;
+		text-decoration: none;
+		color: var(--color-text);
+	}
+
+	.mag-widget__posts a:hover {
+		color: var(--color-accent);
+	}
+
+	.mag-widget__categories {
+		margin: 0 0 0.75rem;
+		padding: 0;
+		list-style: none;
+	}
+
+	.mag-widget__categories a {
+		display: flex;
+		justify-content: space-between;
+		gap: 1rem;
+		padding: 0.55rem 0;
+		text-decoration: none;
+		color: var(--color-text);
+		border-bottom: 1px solid var(--color-border);
+		font-size: 0.875rem;
+	}
+
+	.mag-widget__categories a:hover {
+		color: var(--color-accent);
+	}
+
+	.mag-widget__count {
+		font-weight: 700;
+		color: var(--color-muted);
+	}
+
+	.mag-newsletter {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.mag-newsletter input {
+		padding: 0.65rem 0.75rem;
+		border: 1px solid var(--color-border);
+		font: inherit;
+	}
+
+	.mag-newsletter button {
+		padding: 0.65rem 1rem;
+		border: 0;
+		background: var(--color-dark);
+		color: #fff;
+		font-weight: 700;
+		cursor: pointer;
+	}
+
+	.mag-newsletter button:hover {
+		background: var(--color-accent);
+	}
+
+	.mag-widget__note {
+		margin: 0.65rem 0 0;
+		font-size: 0.75rem;
+		color: var(--color-muted);
+	}
+
+	.visually-hidden {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+		border: 0;
+	}
+</style>

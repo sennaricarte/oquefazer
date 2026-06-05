@@ -1,0 +1,23 @@
+---
+const gaId = import.meta.env.PUBLIC_GA_ID;
+const isProduction = import.meta.env.PROD;
+const shouldLoad = isProduction && Boolean(gaId);
+---
+
+{shouldLoad && (
+	<>
+		<script
+			type="text/partytown"
+			src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+			async
+		/>
+		<script type="text/partytown" define:vars={{ gaId }}>
+			window.dataLayer = window.dataLayer || [];
+			function gtag() {
+				dataLayer.push(arguments);
+			}
+			gtag('js', new Date());
+			gtag('config', gaId, { anonymize_ip: true, send_page_view: true });
+		</script>
+	</>
+)}

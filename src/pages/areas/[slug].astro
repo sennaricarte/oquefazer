@@ -1,0 +1,227 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BreadcrumbNav from '../../components/BreadcrumbNav.astro';
+import MagazineCard from '../../components/MagazineCard.astro';
+import { getPublishedPosts } from '../../utils/blog';
+import {
+	getAllClusters,
+	getClusterBySlug,
+	getClusterPath,
+	getFeaturedPostsForCluster,
+	getPostsInCluster,
+	getAreasIndexPath,
+} from '../../utils/clusters';
+import { calculateReadingTime } from '../../utils/readingTime';
+import { breadcrumbListJsonLd, faqPageJsonLd } from '../../utils/schema';
+import { generateBreadcrumbs, generateOgImageUrl } from '../../utils/seo';
+
+export function getStaticPaths() {
+	return getAllClusters().map((cluster) => ({
+		params: { slug: cluster.slug },
+	}));
+}
+
+const slug = Astro.params.slug!;
+const cluster = getClusterBySlug(slug);
+
+if (!cluster) {
+	return Astro.redirect('/404');
+}
+
+const site = Astro.site!;
+const posts = await getPublishedPosts();
+const clusterPosts = getPostsInCluster(posts, slug);
+const featured = getFeaturedPostsForCluster(posts, slug, 24);
+
+const canonicalPath = getClusterPath(slug);
+const pageTitle = `Profissões em ${cluster.title} — O Que Faz`;
+const ogImage = generateOgImageUrl(pageTitle, cluster.description, site);
+
+const breadcrumbItems = generateBreadcrumbs(canonicalPath, site);
+const faqSchema = cluster.faq.length > 0 ? faqPageJsonLd(cluster.faq, canonicalPath, site) : null;
+
+const collectionSchema = {
+	'@context': 'https://schema.org',
+	'@type': 'CollectionPage',
+	name: pageTitle,
+	description: cluster.description,
+	url: new URL(canonicalPath, site).href,
+	inLanguage: 'pt-BR',
+	isPartOf: {
+		'@type': 'WebSite',
+		name: import.meta.env.PUBLIC_BLOG_NAME ?? 'O Que Faz',
+		url: site.href,
+	},
+};
+---
+
+<BaseLayout
+	title={pageTitle}
+	description={cluster.description}
+	canonicalURL={canonicalPath}
+	ogImage={ogImage}
+	ogType="website"
+>
+	<Fragment slot="head">
+		<script type="application/ld+json" set:html={JSON.stringify(breadcrumbListJsonLd(breadcrumbItems))} />
+		<script type="application/ld+json" set:html={JSON.stringify(collectionSchema)} />
+		{faqSchema && <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />}
+	</Fragment>
+
+	<div class="cluster-hub page-wrap page-wrap--wide">
+		<BreadcrumbNav items={breadcrumbItems} />
+
+		<header class="cluster-hub__header">
+			<p class="cluster-hub__eyebrow">
+				<a href={getAreasIndexPath()}>Áreas</a>
+				<span aria-hidden="true"> / </span>
+				{cluster.title}
+			</p>
+			<h1>Profissões em {cluster.title}</h1>
+			<p class="cluster-hub__intro">{cluster.intro}</p>
+			<ul class="cluster-hub__highlights">
+				{cluster.highlights.map((item) => (
+					<li>{item}</li>
+				))}
+			</ul>
+			<p class="cluster-hub__meta">
+				<strong>{clusterPosts.length}</strong>
+				{clusterPosts.length === 1 ? ' guia publicado' : ' guias publicados'} nesta área
+			</p>
+		</header>
+
+		{featured.length > 0 && (
+			<section class="cluster-hub__posts" aria-labelledby="posts-heading">
+				<h2 id="posts-heading">Profissões e guias em {cluster.title}</h2>
+				<div class="cluster-hub__list">
+					{featured.map((post) => (
+						<MagazineCard
+							post={post}
+							variant="list"
+							readingMinutes={
+								post.data.readingTime ?? calculateReadingTime(post.body ?? '')
+							}
+						/>
+					))}
+				</div>
+			</section>
+		)}
+
+		{cluster.faq.length > 0 && (
+			<section class="cluster-hub__faq" aria-labelledby="faq-heading">
+				<h2 id="faq-heading">Perguntas frequentes sobre {cluster.title}</h2>
+				<div class="cluster-hub__faq-list">
+					{cluster.faq.map((item) => (
+						<details class="cluster-faq-item">
+							<summary>{item.question}</summary>
+							<p>{item.answer}</p>
+						</details>
+					))}
+				</div>
+			</section>
+		)}
+
+		<nav class="cluster-hub__nav" aria-label="Outras áreas">
+			<a class="link-brand" href={getAreasIndexPath()}>← Todas as áreas</a>
+			<a class="link-brand" href="/blog">Ver listagem geral de profissões</a>
+		</nav>
+	</div>
+</BaseLayout>
+
+<style>
+	.cluster-hub__header {
+		margin-bottom: 2.5rem;
+		padding-bottom: 2rem;
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	.cluster-hub__eyebrow {
+		margin: 0 0 0.5rem;
+		font-size: 0.875rem;
+		color: var(--color-muted);
+	}
+
+	.cluster-hub__eyebrow a {
+		font-weight: 600;
+		color: var(--color-brand);
+		text-decoration: none;
+	}
+
+	.cluster-hub__header h1 {
+		margin: 0 0 1rem;
+		font-family: var(--font-display);
+		font-size: clamp(1.75rem, 4vw, 2.5rem);
+	}
+
+	.cluster-hub__intro {
+		margin: 0 0 1.25rem;
+		max-width: 44rem;
+		font-size: 1.0625rem;
+		line-height: 1.65;
+		color: var(--color-text-soft);
+	}
+
+	.cluster-hub__highlights {
+		margin: 0 0 1.25rem;
+		padding-left: 1.25rem;
+		max-width: 44rem;
+		color: var(--color-text-soft);
+	}
+
+	.cluster-hub__highlights li {
+		margin-bottom: 0.4rem;
+	}
+
+	.cluster-hub__meta {
+		margin: 0;
+		font-size: 0.9375rem;
+		color: var(--color-muted);
+	}
+
+	.cluster-hub__posts h2,
+	.cluster-hub__faq h2 {
+		margin: 0 0 1.5rem;
+		font-family: var(--font-display);
+		font-size: 1.35rem;
+	}
+
+	.cluster-hub__list {
+		display: flex;
+		flex-direction: column;
+		gap: 2rem;
+	}
+
+	.cluster-hub__faq {
+		margin-top: 3rem;
+		padding-top: 2rem;
+		border-top: 1px solid var(--color-border);
+	}
+
+	.cluster-faq-item {
+		margin-bottom: 0.75rem;
+		padding: 1rem 1.1rem;
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
+	}
+
+	.cluster-faq-item summary {
+		font-weight: 700;
+		cursor: pointer;
+		color: var(--color-text);
+	}
+
+	.cluster-faq-item p {
+		margin: 0.75rem 0 0;
+		color: var(--color-text-soft);
+		line-height: 1.6;
+	}
+
+	.cluster-hub__nav {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1rem 2rem;
+		margin-top: 3rem;
+		padding-top: 1.5rem;
+		border-top: 1px solid var(--color-border);
+	}
+</style>

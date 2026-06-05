@@ -1,0 +1,244 @@
+---
+import type { BlogEntry } from '../utils/blog';
+import { getPostPath } from '../utils/blog';
+
+interface Props {
+	posts: BlogEntry[];
+	placeholder?: string;
+}
+
+const { posts, placeholder = 'Ex.: enfermeiro, advogado, tecnologia…' } = Astro.props;
+
+const searchIndex = posts.map((post) => ({
+	title: post.data.title,
+	description: post.data.description,
+	tags: post.data.tags,
+	url: getPostPath(post),
+}));
+---
+
+<div class="search" data-search>
+	<form class="search__form" role="search" aria-label="Buscar profissões">
+		<label class="search__label" for="search-query">Buscar profissão</label>
+		<input
+			id="search-query"
+			class="search__input"
+			type="search"
+			name="q"
+			autocomplete="off"
+			placeholder={placeholder}
+			aria-controls="search-results"
+			aria-describedby="search-hint"
+		/>
+		<button type="submit" class="search__submit">Buscar</button>
+	</form>
+	<p id="search-hint" class="search__hint">
+		Pressione Enter para buscar. Resultados aparecem abaixo enquanto você digita.
+	</p>
+	<div
+		id="search-results"
+		class="search__results"
+		role="region"
+		aria-live="polite"
+		aria-relevant="additions removals"
+		aria-label="Resultados da busca"
+		hidden
+	>
+		<p class="search__status" id="search-status"></p>
+		<ul class="search__list" id="search-list"></ul>
+	</div>
+</div>
+
+<script type="application/json" id="search-index" set:html={JSON.stringify(searchIndex)} />
+
+<script>
+	import Fuse from 'fuse.js';
+
+	const indexEl = document.getElementById('search-index');
+	const form = document.querySelector<HTMLFormElement>('[data-search] .search__form');
+	const input = document.getElementById('search-query');
+	const resultsRegion = document.getElementById('search-results');
+	const statusEl = document.getElementById('search-status');
+	const listEl = document.getElementById('search-list');
+
+	if (!indexEl || !form || !input || !resultsRegion || !statusEl || !listEl) {
+		throw new Error('Search.astro: elementos da busca não encontrados.');
+	}
+
+	const items = JSON.parse(indexEl.textContent ?? '[]');
+
+	const fuse = new Fuse(items, {
+		keys: [
+			{ name: 'title', weight: 0.5 },
+			{ name: 'description', weight: 0.3 },
+			{ name: 'tags', weight: 0.2 },
+		],
+		threshold: 0.4,
+		ignoreLocation: true,
+		minMatchCharLength: 2,
+	});
+
+	function renderResults(query: string) {
+		const trimmed = query.trim();
+
+		if (trimmed.length < 2) {
+			resultsRegion.hidden = true;
+			listEl.replaceChildren();
+			statusEl.textContent = '';
+			return;
+		}
+
+		const matches = fuse.search(trimmed).slice(0, 12);
+		resultsRegion.hidden = false;
+		listEl.replaceChildren();
+
+		if (matches.length === 0) {
+			statusEl.textContent = `Nenhum resultado para “${trimmed}”.`;
+			return;
+		}
+
+		statusEl.textContent = `${matches.length} resultado${matches.length === 1 ? '' : 's'} para “${trimmed}”.`;
+
+		for (const { item } of matches) {
+			const li = document.createElement('li');
+			li.className = 'search__item';
+
+			const link = document.createElement('a');
+			link.href = item.url;
+			link.className = 'search__link';
+
+			const titleEl = document.createElement('strong');
+			titleEl.textContent = item.title;
+			link.appendChild(titleEl);
+
+			const descEl = document.createElement('span');
+			descEl.textContent = item.description;
+			link.appendChild(descEl);
+
+			if (item.tags?.length) {
+				const tags = document.createElement('span');
+				tags.className = 'search__tags';
+				tags.textContent = item.tags.join(' · ');
+				link.appendChild(tags);
+			}
+
+			li.appendChild(link);
+			listEl.appendChild(li);
+		}
+	}
+
+	form.addEventListener('submit', (event) => {
+		event.preventDefault();
+		renderResults(input.value);
+		input.focus();
+	});
+
+	input.addEventListener('input', () => {
+		renderResults(input.value);
+	});
+</script>
+
+<style>
+	.search__form {
+		display: grid;
+		gap: 0.75rem;
+	}
+
+	@media (min-width: 640px) {
+		.search__form {
+			grid-template-columns: 1fr auto;
+			align-items: end;
+		}
+	}
+
+	.search__label {
+		font-weight: 600;
+		font-size: 0.9375rem;
+	}
+
+	.search__input {
+		width: 100%;
+		padding: 0.65rem 0.75rem;
+		border: 1px solid #cbd5e1;
+		border-radius: 0.375rem;
+		font: inherit;
+	}
+
+	.search__input:focus {
+		outline: 2px solid var(--color-brand);
+		outline-offset: 2px;
+	}
+
+	.search__submit {
+		padding: 0.65rem 1.25rem;
+		font: inherit;
+		font-weight: 600;
+		color: #fff;
+		background: var(--color-brand);
+		border: none;
+		border-radius: 0.375rem;
+		cursor: pointer;
+	}
+
+	.search__submit:hover {
+		background: #1d4ed8;
+	}
+
+	.search__hint {
+		margin: 0.5rem 0 0;
+		font-size: 0.8125rem;
+		color: #64748b;
+	}
+
+	.search__results {
+		margin-top: 1.5rem;
+	}
+
+	.search__status {
+		margin: 0 0 1rem;
+		font-size: 0.9375rem;
+		color: #475569;
+	}
+
+	.search__list {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+
+	:global(.search__link) {
+		display: flex;
+		flex-direction: column;
+		gap: 0.35rem;
+		padding: 1rem;
+		text-decoration: none;
+		color: inherit;
+		border: 1px solid #e2e8f0;
+		border-radius: 0.5rem;
+		transition: border-color 0.15s, background-color 0.15s;
+	}
+
+	:global(.search__link:hover) {
+		border-color: #93c5fd;
+		background: #f8fafc;
+	}
+
+	:global(.search__link strong) {
+		color: #0f172a;
+		font-size: 1.0625rem;
+	}
+
+	:global(.search__link span) {
+		color: #475569;
+		font-size: 0.9375rem;
+		line-height: 1.5;
+	}
+
+	:global(.search__tags) {
+		font-size: 0.8125rem;
+		color: var(--color-brand);
+	}
+</style>

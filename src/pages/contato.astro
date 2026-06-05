@@ -1,0 +1,143 @@
+---
+import { loadEnv } from 'vite';
+import InstitutionalLayout from '../components/InstitutionalLayout.astro';
+
+const { SITE_NAME, SITE_URL } = loadEnv(import.meta.env.MODE, process.cwd(), '');
+const blogName =
+	SITE_NAME || import.meta.env.PUBLIC_BLOG_NAME || import.meta.env.SITE_NAME || 'O Que Faz';
+const siteUrl = (SITE_URL || Astro.site?.href || '').replace(/\/$/, '');
+const contactEmail =
+	import.meta.env.PUBLIC_CONTACT_EMAIL || 'contato@oquefaz.app.br';
+
+const pageTitle = `Contato — ${blogName}`;
+const description =
+	'Fale com a equipe do O Que Faz: dúvidas sobre profissões, parcerias, correções de conteúdo e questões de privacidade (LGPD).';
+---
+
+<InstitutionalLayout
+	pageTitle={pageTitle}
+	description={description}
+	canonicalPath="/contato"
+	heading="Contato"
+	lead="Quer sugerir uma profissão, reportar um erro, propor parceria ou tratar de dados pessoais? Estamos à disposição."
+>
+	<Fragment slot="head">
+		<script
+			type="application/ld+json"
+			set:html={JSON.stringify({
+				'@context': 'https://schema.org',
+				'@type': 'ContactPage',
+				name: pageTitle,
+				description,
+				url: `${siteUrl}/contato`,
+				inLanguage: 'pt-BR',
+				mainEntity: {
+					'@type': 'Organization',
+					name: blogName,
+					url: siteUrl,
+					email: contactEmail,
+				},
+			})}
+		/>
+	</Fragment>
+
+	<section class="contact-block" aria-labelledby="email-titulo">
+		<h2 id="email-titulo">E-mail</h2>
+		<p>
+			Canal principal para todas as solicitações. Responderemos assim que possível, em dias úteis.
+		</p>
+		<p class="contact-block__email">
+			<a href={`mailto:${contactEmail}`}>{contactEmail}</a>
+		</p>
+		<a class="btn-primary contact-block__btn" href={`mailto:${contactEmail}`}>
+			Enviar e-mail
+		</a>
+	</section>
+
+	<h2>Como podemos ajudar</h2>
+	<ul>
+		<li>
+			<strong>Conteúdo editorial:</strong> sugestão de profissão, correção de informação ou atualização de dados de
+			mercado.
+		</li>
+		<li>
+			<strong>Parcerias e mídia:</strong> propostas de colaboração, guest posts alinhados ao nicho de carreiras (avaliados
+			caso a caso).
+		</li>
+		<li>
+			<strong>Privacidade (LGPD):</strong> exercício de direitos do titular — acesse também a{' '}
+			<a href="/politica-de-privacidade">Política de Privacidade</a>.
+		</li>
+		<li>
+			<strong>Cookies e rastreamento:</strong> dúvidas sobre analytics — veja a{' '}
+			<a href="/politica-de-cookies">Política de Cookies</a>.
+		</li>
+	</ul>
+
+	<h2>Antes de escrever</h2>
+	<p>
+		Para encontrar uma profissão rapidamente, use a <a href="/busca">Busca</a> ou navegue em{' '}
+		<a href="/blog">Profissões</a> e <a href="/tags">Categorias</a>. Isso pode resolver sua dúvida sem esperar resposta.
+	</p>
+
+	<h2>Informações úteis no e-mail</h2>
+	<p>Para agilizar o atendimento, inclua quando relevante:</p>
+	<ul>
+		<li>assunto claro no título da mensagem;</li>
+		<li>link da página do site a que se refere;</li>
+		<li>descrição objetiva do pedido ou da correção sugerida.</li>
+	</ul>
+
+	<p class="contact-note">
+		Este site não possui formulário online: o envio é feito pelo seu provedor de e-mail (Gmail, Outlook, etc.) ao clicar
+		no endereço acima. Não solicitamos senhas nem pagamentos por este canal.
+	</p>
+
+	<nav slot="related" aria-label="Links institucionais">
+		<ul class="institutional-links">
+			<li><a href="/sobre">Sobre nós</a></li>
+			<li><a href="/politica-de-privacidade">Política de Privacidade</a></li>
+			<li><a href="/politica-de-cookies">Política de Cookies</a></li>
+		</ul>
+	</nav>
+</InstitutionalLayout>
+
+<style>
+	.contact-block {
+		margin-bottom: 2rem;
+		padding: 1.5rem 1.35rem;
+		background: var(--color-brand-subtle);
+		border: 1px solid var(--color-brand-muted);
+	}
+
+	.contact-block__email {
+		margin: 0 0 1.25rem;
+		font-size: 1.25rem;
+		font-weight: 700;
+	}
+
+	.contact-block__email a {
+		color: var(--color-brand);
+		text-decoration: none;
+	}
+
+	.contact-block__email a:hover {
+		text-decoration: underline;
+	}
+
+	.contact-block__btn {
+		background: var(--color-brand);
+	}
+
+	.contact-block__btn:hover {
+		background: var(--color-brand-hover);
+	}
+
+	.contact-note {
+		margin-top: 2rem;
+		padding: 1rem 1.1rem;
+		font-size: 0.9375rem;
+		background: var(--color-surface);
+		border-left: 4px solid var(--color-muted);
+	}
+</style>

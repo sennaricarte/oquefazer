@@ -1,0 +1,160 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import { loadEnv } from 'vite';
+import Analytics from '../components/Analytics.astro';
+import SEO from '../components/SEO.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import type { BaseLayoutProps } from '../types/seo';
+import '../styles/global.css';
+
+const { SITE_NAME } = loadEnv(import.meta.env.MODE, process.cwd(), '');
+
+interface Props extends BaseLayoutProps {}
+
+const {
+	title,
+	description,
+	canonicalURL,
+	ogImage,
+	ogType,
+	noindex,
+	author,
+	datePublished,
+	dateModified,
+	publisherLogo,
+	logoSrc,
+	heroImageSrc,
+	themeColor = '#0f766e',
+} = Astro.props;
+
+const site = Astro.site;
+if (!site) {
+	throw new Error('BaseLayout.astro: defina `site` em astro.config.mjs.');
+}
+
+const blogName =
+	SITE_NAME || import.meta.env.PUBLIC_BLOG_NAME || import.meta.env.SITE_NAME || 'O Que Faz';
+const organizationLogo = publisherLogo ?? logoSrc ?? '/favicon.svg';
+
+const seoProps = {
+	title,
+	description,
+	canonicalURL,
+	ogImage,
+	ogType,
+	noindex,
+	author,
+	datePublished,
+	dateModified,
+	publisherLogo,
+};
+
+const organizationJsonLd = {
+	'@context': 'https://schema.org',
+	'@type': 'Organization',
+	name: blogName,
+	url: site.href,
+	description:
+		import.meta.env.PUBLIC_BLOG_DESCRIPTION ??
+		'Guia completo de profissões com formação, atuação e mercado de trabalho.',
+	logo: new URL(organizationLogo, site).href,
+};
+---
+
+<!doctype html>
+<html lang="pt-BR">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="theme-color" content={themeColor} />
+		<meta name="generator" content={Astro.generator} />
+
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+		{logoSrc && <link rel="preload" href={logoSrc} as="image" fetchpriority="high" />}
+		{heroImageSrc && <link rel="preload" href={heroImageSrc} as="image" fetchpriority="high" />}
+
+		<link
+			rel="stylesheet"
+			href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+		/>
+
+		<style is:inline>
+			*,
+			*::before,
+			*::after {
+				box-sizing: border-box;
+			}
+
+			html {
+				-webkit-text-size-adjust: 100%;
+				scroll-behavior: smooth;
+			}
+
+			body {
+				margin: 0;
+				min-height: 100dvh;
+				font-family: var(--font-sans);
+				font-size: 1rem;
+				line-height: 1.6;
+				color: var(--color-text);
+				background-color: var(--color-bg);
+				display: flex;
+				flex-direction: column;
+			}
+
+			main {
+				flex: 1;
+				width: 100%;
+			}
+
+			img,
+			picture,
+			video,
+			canvas,
+			svg {
+				display: block;
+				max-width: 100%;
+			}
+
+			a {
+				color: inherit;
+			}
+		</style>
+
+		<SEO {...seoProps} />
+
+		<link
+			rel="alternate"
+			type="application/rss+xml"
+			title={`Feed RSS — ${blogName}`}
+			href={new URL('/feed.xml', site).href}
+		/>
+
+		<slot name="head" />
+
+		<link rel="icon" href="/favicon.ico" sizes="48x48" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+		<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
+		<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+		<link rel="manifest" href="/site.webmanifest" />
+
+		<ClientRouter />
+
+		<Analytics />
+	</head>
+	<body>
+		<SiteHeader />
+
+		<main id="conteudo-principal">
+			<slot />
+		</main>
+
+		<SiteFooter>
+			<script type="application/ld+json" set:html={JSON.stringify(organizationJsonLd)} />
+		</SiteFooter>
+	</body>
+</html>

@@ -1,0 +1,53 @@
+---
+import type { ClusterDefinition } from '../utils/clusters';
+import { getClusterPath } from '../utils/clusters';
+
+interface Props {
+	cluster: ClusterDefinition;
+}
+
+const { cluster } = Astro.props;
+---
+
+<aside class="cluster-banner" aria-label={`Área: ${cluster.title}`}>
+	<p class="cluster-banner__label">Você está no cluster</p>
+	<p class="cluster-banner__text">
+		Este conteúdo faz parte da área <strong>{cluster.title}</strong>.
+		<a href={getClusterPath(cluster.slug)}>Ver todas as profissões em {cluster.title} →</a>
+	</p>
+</aside>
+
+<style>
+	.cluster-banner {
+		margin: 0 0 1.75rem;
+		padding: 1rem 1.15rem;
+		background: var(--color-brand-subtle);
+		border-left: 4px solid var(--color-brand);
+	}
+
+	.cluster-banner__label {
+		margin: 0 0 0.35rem;
+		font-size: 0.6875rem;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--color-brand);
+	}
+
+	.cluster-banner__text {
+		margin: 0;
+		font-size: 0.9375rem;
+		line-height: 1.55;
+		color: var(--color-text-soft);
+	}
+
+	.cluster-banner__text a {
+		font-weight: 600;
+		color: var(--color-brand);
+		text-decoration: none;
+	}
+
+	.cluster-banner__text a:hover {
+		text-decoration: underline;
+	}
+</style>

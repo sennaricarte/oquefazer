@@ -1,0 +1,153 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Search from '../../components/Search.astro';
+import BreadcrumbNav from '../../components/BreadcrumbNav.astro';
+import {
+	getPublishedPosts,
+	getTagPath,
+	getTagsIndexPath,
+	getTagStats,
+} from '../../utils/blog';
+import { breadcrumbListJsonLd } from '../../utils/schema';
+import { generateBreadcrumbs } from '../../utils/seo';
+
+const site = Astro.site!;
+const posts = await getPublishedPosts();
+const tagStats = getTagStats(posts);
+const totalTags = tagStats.length;
+const canonicalPath = getTagsIndexPath();
+
+const description =
+	totalTags > 0
+		? `Explore ${totalTags} categorias do guia de profissões: saúde, tecnologia, educação e mais áreas de atuação.`
+		: 'Navegue pelas categorias e encontre profissões por área de atuação.';
+
+const breadcrumbItems = generateBreadcrumbs(canonicalPath, site);
+---
+
+<BaseLayout
+	title="Categorias"
+	description={description}
+	canonicalURL={canonicalPath}
+	ogImage="/og-default.png"
+	ogType="website"
+>
+	<Fragment slot="head">
+		<script
+			type="application/ld+json"
+			set:html={JSON.stringify(breadcrumbListJsonLd(breadcrumbItems))}
+		/>
+	</Fragment>
+
+	<div class="page-wrap">
+		<BreadcrumbNav items={breadcrumbItems} />
+
+		<header class="page-header">
+			<h1>Categorias de profissões</h1>
+			<p>{description}</p>
+			<p>
+				<a class="btn-primary" href="/areas">Ver hubs por área (clusters SEO) →</a>
+			</p>
+		</header>
+
+		<section class="search-section" aria-labelledby="search-heading">
+			<h2 id="search-heading">Buscar profissão</h2>
+			<Search posts={posts} />
+		</section>
+
+		{tagStats.length > 0 ? (
+			<section class="tags-section" aria-labelledby="tags-list-heading">
+				<h2 id="tags-list-heading">Categorias ({totalTags})</h2>
+				<ul class="tag-list">
+					{tagStats.map(({ tag, count }) => (
+						<li>
+							<a href={getTagPath(tag)} class="tag-list__link">
+								<span class="tag-list__name">{tag}</span>
+								<span class="tag-list__count">
+									{count} post{count === 1 ? '' : 's'}
+								</span>
+							</a>
+						</li>
+					))}
+				</ul>
+			</section>
+		) : (
+			<p>Nenhuma tag publicada ainda.</p>
+		)}
+	</div>
+</BaseLayout>
+
+<style>
+	.page-wrap {
+		max-width: 48rem;
+		margin: 0 auto;
+		padding: 2rem 1rem 3rem;
+	}
+
+	.page-header h1 {
+		margin: 0 0 0.75rem;
+		font-size: clamp(1.75rem, 4vw, 2.25rem);
+		line-height: 1.2;
+	}
+
+	.page-header p {
+		margin: 0 0 2rem;
+		color: #475569;
+	}
+
+	.search-section,
+	.tags-section {
+		margin-top: 2.5rem;
+		padding-top: 2rem;
+		border-top: 1px solid #e2e8f0;
+	}
+
+	.search-section h2,
+	.tags-section h2 {
+		margin: 0 0 1.25rem;
+		font-size: 1.25rem;
+	}
+
+	.tag-list {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		display: grid;
+		gap: 0.75rem;
+	}
+
+	@media (min-width: 640px) {
+		.tag-list {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	.tag-list__link {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 1rem;
+		padding: 0.85rem 1rem;
+		text-decoration: none;
+		color: inherit;
+		border: 1px solid #e2e8f0;
+		border-radius: 0.5rem;
+		transition: border-color 0.15s, background-color 0.15s;
+	}
+
+	.tag-list__link:hover {
+		border-color: #93c5fd;
+		background: #f8fafc;
+	}
+
+	.tag-list__name {
+		font-weight: 600;
+		color: #0f172a;
+	}
+
+	.tag-list__count {
+		font-size: 0.875rem;
+		color: #64748b;
+		white-space: nowrap;
+	}
+</style>

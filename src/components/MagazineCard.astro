@@ -1,0 +1,185 @@
+---
+import type { BlogEntry } from '../utils/blog';
+import { getPostPath, getTagPath } from '../utils/blog';
+import { calculateReadingTime, formatReadingTime } from '../utils/readingTime';
+import { formatPostDateShort, getPrimaryCategory } from '../utils/post';
+import OptimizedImage from './OptimizedImage.astro';
+
+interface Props {
+	post: BlogEntry;
+	variant?: 'grid' | 'list' | 'compact';
+	readingMinutes?: number;
+}
+
+const { post, variant = 'grid', readingMinutes } = Astro.props;
+const { title, description, pubDate, heroImage, heroImageAlt } = post.data;
+const postUrl = getPostPath(post);
+const category = getPrimaryCategory(post);
+const minutes = readingMinutes ?? calculateReadingTime(post.body ?? '');
+---
+
+<article class:list={['mag-card', `mag-card--${variant}`]}>
+	{heroImage && variant !== 'compact' && (
+		<a class="mag-card__media" href={postUrl} tabindex="-1" aria-hidden="true">
+			<OptimizedImage
+				src={heroImage}
+				alt={heroImageAlt ?? title}
+				width={variant === 'list' ? 280 : 400}
+				height={variant === 'list' ? 200 : 260}
+				loading="lazy"
+			/>
+		</a>
+	)}
+
+	<div class="mag-card__body">
+		<div class="mag-card__meta">
+			<a class="mag-card__category" href={getTagPath(category)}>{category}</a>
+			<time datetime={pubDate.toISOString()}>{formatPostDateShort(pubDate)}</time>
+			{minutes > 0 && <span>{formatReadingTime(minutes)}</span>}
+		</div>
+
+		<h3 class="mag-card__title">
+			<a href={postUrl}>{title}</a>
+		</h3>
+
+		{variant !== 'compact' && <p class="mag-card__desc">{description}</p>}
+
+		{variant === 'list' && (
+			<span class="mag-card__author">Por {post.data.author}</span>
+		)}
+	</div>
+</article>
+
+<style>
+	.mag-card {
+		display: grid;
+		gap: 1rem;
+	}
+
+	.mag-card--list {
+		grid-template-columns: 1fr;
+		padding-bottom: 1.25rem;
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	@media (min-width: 640px) {
+		.mag-card--list:has(.mag-card__media) {
+			grid-template-columns: 220px 1fr;
+			align-items: start;
+		}
+	}
+
+	.mag-card--grid {
+		background: #fff;
+		border: 1px solid var(--color-border);
+		border-radius: 0.25rem;
+		overflow: hidden;
+		transition: box-shadow 0.2s, transform 0.2s;
+	}
+
+	.mag-card--grid:hover {
+		box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+		transform: translateY(-2px);
+	}
+
+	.mag-card--compact {
+		padding: 0.75rem 0;
+		border-bottom: 1px dashed var(--color-border);
+	}
+
+	.mag-card__media {
+		display: block;
+		overflow: hidden;
+		text-decoration: none;
+	}
+
+	.mag-card--grid .mag-card__media :global(.optimized-image) {
+		aspect-ratio: 16 / 10;
+	}
+
+	.mag-card__media :global(img),
+	.mag-card__media :global(picture) {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		transition: transform 0.35s;
+	}
+
+	.mag-card:hover .mag-card__media :global(img),
+	.mag-card:hover .mag-card__media :global(picture) {
+		transform: scale(1.04);
+	}
+
+	.mag-card--grid .mag-card__body {
+		padding: 1rem 1rem 1.15rem;
+	}
+
+	.mag-card__meta {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.35rem 0.65rem;
+		margin-bottom: 0.5rem;
+		font-size: 0.75rem;
+		color: var(--color-muted);
+	}
+
+	.mag-card__category {
+		padding: 0.15rem 0.5rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		text-decoration: none;
+		color: #fff;
+		background: var(--color-dark);
+	}
+
+	.mag-card__category:hover {
+		background: var(--color-accent);
+	}
+
+	.mag-card__title {
+		margin: 0;
+		font-family: var(--font-display);
+		line-height: 1.25;
+	}
+
+	.mag-card--grid .mag-card__title {
+		font-size: 1.125rem;
+	}
+
+	.mag-card--list .mag-card__title {
+		font-size: 1.25rem;
+	}
+
+	.mag-card--compact .mag-card__title {
+		font-size: 0.9375rem;
+	}
+
+	.mag-card__title a {
+		color: var(--color-text);
+		text-decoration: none;
+	}
+
+	.mag-card__title a:hover {
+		color: var(--color-accent);
+	}
+
+	.mag-card__desc {
+		margin: 0.5rem 0 0;
+		font-size: 0.875rem;
+		color: var(--color-text-soft);
+		line-height: 1.55;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+
+	.mag-card__author {
+		display: block;
+		margin-top: 0.5rem;
+		font-size: 0.8125rem;
+		color: var(--color-muted);
+	}
+</style>

@@ -1,0 +1,143 @@
+---
+import { loadEnv } from 'vite';
+import InstitutionalLayout from '../components/InstitutionalLayout.astro';
+
+const { SITE_NAME, SITE_URL } = loadEnv(import.meta.env.MODE, process.cwd(), '');
+const blogName =
+	SITE_NAME || import.meta.env.PUBLIC_BLOG_NAME || import.meta.env.SITE_NAME || 'O Que Faz';
+const siteUrl = (SITE_URL || Astro.site?.href || '').replace(/\/$/, '');
+const contactEmail =
+	import.meta.env.PUBLIC_CONTACT_EMAIL || 'contato@oquefaz.app.br';
+const gaId = import.meta.env.PUBLIC_GA_ID;
+const usesAnalytics = Boolean(gaId);
+
+const pageTitle = `Política de Cookies — ${blogName}`;
+const description =
+	'Entenda quais cookies o O Que Faz utiliza, para que servem e como gerenciar suas preferências no navegador.';
+---
+
+<InstitutionalLayout
+	pageTitle={pageTitle}
+	description={description}
+	canonicalPath="/politica-de-cookies"
+	heading="Política de Cookies"
+	lead={`Esta página explica o uso de cookies e tecnologias semelhantes no site ${blogName} (${siteUrl}).`}
+>
+	<Fragment slot="head">
+		<script
+			type="application/ld+json"
+			set:html={JSON.stringify({
+				'@context': 'https://schema.org',
+				'@type': 'WebPage',
+				name: pageTitle,
+				description,
+				url: `${siteUrl}/politica-de-cookies`,
+				inLanguage: 'pt-BR',
+			})}
+		/>
+	</Fragment>
+
+	<h2>1. O que são cookies</h2>
+	<p>
+		Cookies são pequenos arquivos de texto armazenados no seu navegador ou dispositivo quando você visita um site. Eles
+		ajudam a lembrar preferências, manter sessões ou medir como o site é utilizado.
+	</p>
+
+	<h2>2. Como usamos cookies</h2>
+	<p>No {blogName}, categorizamos o uso da seguinte forma:</p>
+
+	<h3>Cookies estritamente necessários</h3>
+	<p>
+		Essenciais para o funcionamento básico do site (por exemplo, segurança ou balanceamento de carga no servidor). Não
+		exigem consentimento prévio nos termos usuais da LGPD, por serem indispensáveis ao serviço solicitado.
+	</p>
+
+	<h3>Cookies de medição e estatística (analíticos)</h3>
+	{usesAnalytics ? (
+		<p>
+			Em <strong>ambiente de produção</strong>, podemos utilizar <strong>Google Analytics 4</strong> (identificador:{' '}
+			<code>{gaId}</code>) para entender de forma agregada como os visitantes usam o site — páginas mais lidas, origem
+			do tráfego e tipo de dispositivo. A configuração inclui <strong>anonimização de IP</strong> quando suportada pelo
+			serviço.
+		</p>
+	) : (
+		<p>
+			Atualmente <strong>não há Google Analytics configurado</strong> neste ambiente. Se for ativado em produção
+			(mediante variável <code>PUBLIC_GA_ID</code>), esta política passará a contemplar cookies de medição conforme a
+			seção abaixo.
+		</p>
+	)}
+	<p>
+		Esses cookies podem ser definidos pelo Google e estão sujeitos à{' '}
+		<a href="https://policies.google.com/privacy" rel="noopener noreferrer" target="_blank">
+			Política de Privacidade do Google
+		</a>.
+	</p>
+
+	<h3>Cookies de terceiros em conteúdo incorporado</h3>
+	<p>
+		Alguns artigos podem conter links ou recursos externos (vídeos, mapas, redes sociais). Ao acessá-los, outros sites
+		podem definir cookies fora do nosso controle. Consulte as políticas de cada serviço.
+	</p>
+
+	<h2>3. Base legal</h2>
+	<p>
+		Cookies não essenciais de medição baseiam-se no seu <strong>consentimento</strong> ou no <strong>legítimo interesse</strong>{' '}
+		em melhorar o conteúdo editorial, conforme a LGPD e orientações da ANPD, sempre que você não os tiver recusado no
+		navegador.
+	</p>
+
+	<h2>4. Como gerenciar ou recusar cookies</h2>
+	<p>Você pode:</p>
+	<ul>
+		<li>alterar as configurações do seu navegador para bloquear ou apagar cookies;</li>
+		<li>usar modo anônimo ou extensões de privacidade;</li>
+		<li>
+			instalar o complemento de opt-out do Google Analytics:{' '}
+			<a
+				href="https://tools.google.com/dlpage/gaoptout"
+				rel="noopener noreferrer"
+				target="_blank"
+			>
+				Browser Add-on
+			</a>;
+		</li>
+		<li>
+			ajustar preferências de anúncios do Google em{' '}
+			<a href="https://adssettings.google.com" rel="noopener noreferrer" target="_blank">
+				Ad Settings
+			</a>.
+		</li>
+	</ul>
+	<p>
+		A recusa de cookies analíticos não impede a leitura do site, mas pode limitar nossa capacidade de medir audiência de
+		forma agregada.
+	</p>
+
+	<h2>5. Armazenamento local e tecnologias similares</h2>
+	<p>
+		Além de cookies, o site pode usar <strong>armazenamento local do navegador</strong> (por exemplo, para busca
+		offline na página <a href="/busca">Busca</a>), sem identificar você pessoalmente.
+	</p>
+
+	<h2>6. Atualizações</h2>
+	<p>
+		Se adicionarmos novas ferramentas que usem cookies (newsletter, chat, embeds), esta página será atualizada. A data da
+		última revisão consta no topo.
+	</p>
+
+	<h2>7. Mais informações</h2>
+	<p>
+		Para detalhes sobre tratamento de dados pessoais, consulte a{' '}
+		<a href="/politica-de-privacidade">Política de Privacidade</a>. Dúvidas:{' '}
+		<a href={`mailto:${contactEmail}`}>{contactEmail}</a> ou <a href="/contato">página de Contato</a>.
+	</p>
+
+	<nav slot="related" aria-label="Links institucionais">
+		<ul class="institutional-links">
+			<li><a href="/politica-de-privacidade">Política de Privacidade</a></li>
+			<li><a href="/contato">Contato</a></li>
+			<li><a href="/sobre">Sobre nós</a></li>
+		</ul>
+	</nav>
+</InstitutionalLayout>

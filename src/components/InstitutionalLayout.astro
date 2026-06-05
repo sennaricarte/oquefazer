@@ -1,0 +1,174 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import BreadcrumbNav from './BreadcrumbNav.astro';
+import { breadcrumbListJsonLd } from '../utils/schema';
+import { generateBreadcrumbs, generateOgImageUrl } from '../utils/seo';
+
+interface Props {
+	pageTitle: string;
+	description: string;
+	canonicalPath: string;
+	heading: string;
+	lead?: string;
+	lastUpdated?: string;
+	noindex?: boolean;
+}
+
+const {
+	pageTitle,
+	description,
+	canonicalPath,
+	heading,
+	lead,
+	lastUpdated = '4 de junho de 2026',
+	noindex = false,
+} = Astro.props;
+
+const site = Astro.site!;
+const siteOrigin = import.meta.env.SITE_URL ?? site.href;
+const breadcrumbItems = generateBreadcrumbs(canonicalPath, site);
+const ogImage = generateOgImageUrl(pageTitle, description, siteOrigin);
+---
+
+<BaseLayout
+	title={pageTitle}
+	description={description}
+	canonicalURL={canonicalPath}
+	ogImage={ogImage}
+	ogType="website"
+	noindex={noindex}
+>
+	<Fragment slot="head">
+		<script type="application/ld+json" set:html={JSON.stringify(breadcrumbListJsonLd(breadcrumbItems))} />
+		<slot name="head" />
+	</Fragment>
+
+	<article class="institutional page-wrap">
+		<BreadcrumbNav items={breadcrumbItems} />
+
+		<header class="institutional__header">
+			<h1>{heading}</h1>
+			{lead && <p class="institutional__lead">{lead}</p>}
+			<p class="institutional__updated">
+				<time datetime="2026-06-04">Última atualização: {lastUpdated}</time>
+			</p>
+		</header>
+
+		<div class="institutional__body">
+			<slot />
+		</div>
+
+		<footer class="institutional__related" aria-label="Páginas relacionadas">
+			<slot name="related" />
+		</footer>
+	</article>
+</BaseLayout>
+
+<style>
+	.institutional {
+		padding-bottom: 3.5rem;
+	}
+
+	.institutional__header {
+		margin-bottom: 2rem;
+		padding-bottom: 1.5rem;
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	.institutional__header h1 {
+		margin: 0 0 0.75rem;
+		font-family: var(--font-display);
+		font-size: clamp(1.75rem, 4vw, 2.25rem);
+		line-height: 1.2;
+		color: var(--color-text);
+	}
+
+	.institutional__lead {
+		margin: 0 0 1rem;
+		max-width: 40rem;
+		font-size: 1.0625rem;
+		line-height: 1.6;
+		color: var(--color-text-soft);
+	}
+
+	.institutional__updated {
+		margin: 0;
+		font-size: 0.8125rem;
+		color: var(--color-muted);
+	}
+
+	.institutional__body :global(h2) {
+		margin: 2rem 0 0.75rem;
+		font-family: var(--font-display);
+		font-size: 1.25rem;
+		color: var(--color-text);
+	}
+
+	.institutional__body :global(h2:first-child) {
+		margin-top: 0;
+	}
+
+	.institutional__body :global(h3) {
+		margin: 1.25rem 0 0.5rem;
+		font-size: 1.0625rem;
+		font-weight: 700;
+		color: var(--color-text);
+	}
+
+	.institutional__body :global(p),
+	.institutional__body :global(li) {
+		color: var(--color-text-soft);
+		line-height: 1.65;
+	}
+
+	.institutional__body :global(p) {
+		margin: 0 0 1rem;
+	}
+
+	.institutional__body :global(ul),
+	.institutional__body :global(ol) {
+		margin: 0 0 1rem;
+		padding-left: 1.35rem;
+	}
+
+	.institutional__body :global(li) {
+		margin-bottom: 0.5rem;
+	}
+
+	.institutional__body :global(a) {
+		color: var(--color-brand);
+		font-weight: 600;
+		text-decoration: underline;
+		text-underline-offset: 2px;
+	}
+
+	.institutional__body :global(a:hover) {
+		color: var(--color-brand-hover);
+	}
+
+	.institutional__related {
+		margin-top: 2.5rem;
+		padding-top: 1.5rem;
+		border-top: 1px solid var(--color-border);
+	}
+
+	.institutional__related :global(.institutional-links) {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem 1.25rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.institutional__related :global(.institutional-links a) {
+		font-size: 0.875rem;
+		font-weight: 600;
+		color: var(--color-accent);
+		text-decoration: none;
+	}
+
+	.institutional__related :global(.institutional-links a:hover) {
+		text-decoration: underline;
+	}
+</style>

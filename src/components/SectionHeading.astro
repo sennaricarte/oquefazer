@@ -1,0 +1,60 @@
+---
+interface Props {
+	title: string;
+	subtitle?: string;
+	href?: string;
+	linkLabel?: string;
+}
+
+const { title, subtitle, href, linkLabel = 'Ver tudo →' } = Astro.props;
+---
+
+<div class="section-heading">
+	<div>
+		<h2 class="section-heading__title">{title}</h2>
+		{subtitle && <p class="section-heading__subtitle">{subtitle}</p>}
+	</div>
+	{href && (
+		<a class="section-heading__link" href={href}>
+			{linkLabel}
+		</a>
+	)}
+</div>
+
+<style>
+	.section-heading {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: flex-end;
+		justify-content: space-between;
+		gap: 0.75rem 1.5rem;
+		margin-bottom: 1.5rem;
+		padding-bottom: 0.75rem;
+		border-bottom: 2px solid var(--color-dark);
+	}
+
+	.section-heading__title {
+		margin: 0;
+		font-family: var(--font-display);
+		font-size: clamp(1.35rem, 2.5vw, 1.75rem);
+		line-height: 1.15;
+	}
+
+	.section-heading__subtitle {
+		margin: 0.35rem 0 0;
+		font-size: 0.875rem;
+		color: var(--color-muted);
+	}
+
+	.section-heading__link {
+		font-size: 0.875rem;
+		font-weight: 700;
+		text-decoration: none;
+		color: var(--color-accent);
+		white-space: nowrap;
+	}
+
+	.section-heading__link:hover {
+		text-decoration: underline;
+	}
+</style>

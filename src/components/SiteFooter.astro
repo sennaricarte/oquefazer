@@ -1,0 +1,172 @@
+---
+import { Image } from 'astro:assets';
+import { loadEnv } from 'vite';
+import logo from '../assets/logo-o-que-faz.png';
+
+const { SITE_NAME } = loadEnv(import.meta.env.MODE, process.cwd(), '');
+const siteName =
+	SITE_NAME || import.meta.env.PUBLIC_BLOG_NAME || import.meta.env.SITE_NAME || 'O Que Faz';
+const year = new Date().getFullYear();
+const tagline =
+	import.meta.env.PUBLIC_BLOG_DESCRIPTION ??
+	'Guia completo de profissões: o que faz, formação, mercado de trabalho e habilidades.';
+---
+
+<footer class="mag-footer">
+	<div class="mag-footer__inner">
+		<div class="mag-footer__brand">
+			<Image
+				src={logo}
+				alt=""
+				width={40}
+				height={40}
+				format="webp"
+				quality="mid"
+				class="mag-footer__logo"
+				loading="lazy"
+			/>
+			<p class="mag-footer__name">{siteName}</p>
+			<p class="mag-footer__tagline">{tagline}</p>
+		</div>
+
+		<div class="mag-footer__nav-group">
+			<nav class="mag-footer__nav" aria-label="Navegação">
+				<p class="mag-footer__nav-label">Navegação</p>
+				<ul>
+					<li><a href="/">Início</a></li>
+					<li><a href="/blog">Profissões</a></li>
+					<li><a href="/areas">Áreas</a></li>
+					<li><a href="/tags">Categorias</a></li>
+					<li><a href="/busca">Busca</a></li>
+					<li><a href="/feed.xml">RSS</a></li>
+				</ul>
+			</nav>
+
+			<nav class="mag-footer__nav" aria-label="Institucional">
+				<p class="mag-footer__nav-label">Institucional</p>
+				<ul>
+					<li><a href="/sobre">Sobre</a></li>
+					<li><a href="/contato">Contato</a></li>
+					<li><a href="/politica-de-privacidade">Privacidade</a></li>
+					<li><a href="/politica-de-cookies">Cookies</a></li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+
+	<div class="mag-footer__bottom">
+		<p>&copy; {year} {siteName}. Todos os direitos reservados.</p>
+		<a class="mag-footer__top" href="#conteudo-principal">Voltar ao topo ↑</a>
+	</div>
+
+	<slot />
+</footer>
+
+<style>
+	.mag-footer {
+		margin-top: auto;
+		padding: 2.5rem 1rem 1.25rem;
+		background: var(--color-dark);
+		color: #94a3b8;
+	}
+
+	.mag-footer__inner {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		gap: 2rem;
+		max-width: var(--page-width-wide);
+		margin: 0 auto 2rem;
+	}
+
+	.mag-footer__brand {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	.mag-footer__logo {
+		width: 2.5rem;
+		height: 2.5rem;
+		border-radius: 0.35rem;
+		object-fit: contain;
+	}
+
+	.mag-footer__name {
+		margin: 0 0 0.5rem;
+		font-family: var(--font-display);
+		font-size: 1.35rem;
+		color: #fff;
+	}
+
+	.mag-footer__tagline {
+		margin: 0;
+		max-width: 28rem;
+		font-size: 0.875rem;
+		line-height: 1.55;
+	}
+
+	.mag-footer__nav-group {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 2rem 3rem;
+	}
+
+	.mag-footer__nav-label {
+		margin: 0 0 0.75rem;
+		font-size: 0.6875rem;
+		font-weight: 700;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: #64748b;
+	}
+
+	.mag-footer__nav ul {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.mag-footer__nav a {
+		font-size: 0.875rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		text-decoration: none;
+		color: #cbd5e1;
+	}
+
+	.mag-footer__nav a:hover {
+		color: var(--color-accent);
+	}
+
+	.mag-footer__bottom {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		max-width: var(--page-width-wide);
+		margin: 0 auto;
+		padding-top: 1.25rem;
+		border-top: 1px solid rgba(255, 255, 255, 0.1);
+		font-size: 0.8125rem;
+	}
+
+	.mag-footer__bottom p {
+		margin: 0;
+	}
+
+	.mag-footer__top {
+		color: #fff;
+		font-weight: 600;
+		text-decoration: none;
+	}
+
+	.mag-footer__top:hover {
+		color: var(--color-accent);
+	}
+</style>

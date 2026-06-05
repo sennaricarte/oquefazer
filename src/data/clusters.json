@@ -1,0 +1,268 @@
+{
+	"metaTags": ["profissões", "profissoes", "artigos"],
+	"clusters": [
+		{
+			"slug": "saude",
+			"title": "Saúde",
+			"tagLabel": "Saúde",
+			"description": "Guia de profissões na Saúde no Brasil: médico, enfermagem, nutrição, telemedicina, saúde digital e mais — formação, mercado e carreira.",
+			"intro": "A área da Saúde concentra algumas das profissões mais demandadas e com maior impacto social no Brasil. Do atendimento clínico clássico — como médico, enfermeiro e nutricionista — às carreiras emergentes em telemedicina, genômica clínica e experiência do paciente digital, há caminhos para perfis clínicos, administrativos e tecnológicos. Todas exigem formação sólida, registro em conselho quando aplicável e atualização constante diante de novas tecnologias e protocolos. Neste hub você encontra fichas resumidas e guias completos sobre o que cada profissional faz, como se formar e onde atuar.",
+			"highlights": [
+				"Médico, enfermeiro, nutricionista, terapeuta ocupacional e gerontologia entre as fichas mais buscadas",
+				"Telemedicina, saúde digital e gestão de experiência do paciente como trilhas em expansão",
+				"Residência médica e pós-graduação como principal via de especialização clínica",
+				"Atuação em SUS, hospitais privados, clínicas, indústria farmacêutica e startups de healthtech",
+				"Interseção crescente com dados clínicos, bioinformática e ética em IA para saúde"
+			],
+			"faq": [
+				{
+					"question": "Quais profissões da saúde têm mais vagas no Brasil?",
+					"answer": "Enfermagem, medicina, nutrição, fisioterapia e psicologia seguem com demanda elevada em hospitais, clínicas e atenção primária. Telemedicina, gestão em saúde e perfis híbridos (UX para saúde, bioinformática clínica) ampliam o mercado além do consultório."
+				},
+				{
+					"question": "Preciso de vestibular para trabalhar na saúde?",
+					"answer": "A maioria das profissões regulamentadas exige ensino superior e aprovação em processos seletivos ou vestibular. Técnicos e auxiliares podem entrar com ensino médio ou curso tecnológico. Medicina e enfermagem são bacharelados com concorrência alta nas universidades públicas."
+				},
+				{
+					"question": "Qual a diferença entre ficha e guia completo no O Que Faz?",
+					"answer": "A ficha (ex.: Médico — O Que Faz) resume atuação, formação e habilidades em poucos minutos. O guia completo (ex.: O que faz um médico) aprofunda dia a dia, salário, especialidades e FAQ. Os dois se complementam e não competem pela mesma intenção de busca."
+				},
+				{
+					"question": "Saúde digital é uma área só para quem programa?",
+					"answer": "Não. Além de desenvolvedores e especialistas em dados clínicos, há vagas para gestores de experiência do paciente, designers de UX para saúde, consultores de telemedicina e profissionais de compliance — muitas vezes com formação em saúde ou administração hospitalar."
+				},
+				{
+					"question": "Quanto tempo leva para se formar médico no Brasil?",
+					"answer": "O curso de Medicina dura em média seis anos, seguido de registro no CRM. Especialidades clínicas exigem residência médica (dois a cinco anos ou mais). Áreas cirúrgicas e de alta complexidade podem demandar fellowship adicional."
+				}
+			],
+			"tagAliases": ["saude", "Saúde"]
+		},
+		{
+			"slug": "tecnologia",
+			"title": "Tecnologia",
+			"tagLabel": "Tecnologia",
+			"description": "Carreiras em Tecnologia e TI: desenvolvimento, ciência de dados, IA, cibersegurança, cloud e produto digital — guias de profissão no O Que Faz.",
+			"intro": "Tecnologia reúne as profissões que mais transformam o mercado de trabalho brasileiro: desenvolvimento de software, ciência de dados, cibersegurança, inteligência artificial, cloud e produto digital. Diferente de áreas tradicionais, muitas funções valorizam portfólio, projetos práticos e certificações tanto quanto — ou mais que — o diploma. O setor também abriu trilhas híbridas: engenheiro de prompt, analista de ética em IA, arquiteto de soluções em nuvem e especialista em cibersegurança industrial. Neste hub você compara carreiras, entende o dia a dia de cada função e descobre por onde começar.",
+			"highlights": [
+				"Desenvolvedor de software, cientista de dados e analista de sistemas entre as fichas centrais",
+				"IA generativa, prompt engineering e MLOps como especialidades em rápido crescimento",
+				"Cibersegurança em alta — do analista júnior ao especialista em segurança industrial",
+				"Trabalho remoto e salários acima da média em funções sênior e de nicho",
+				"Bootcamps, graduação, certificações (AWS, Azure, etc.) e projetos open source como portas de entrada"
+			],
+			"faq": [
+				{
+					"question": "Dá para entrar em tecnologia sem faculdade?",
+					"answer": "Sim, especialmente em desenvolvimento front-end, back-end e dados júnior. Portfólio no GitHub, projetos reais e certificações costumam pesar na contratação. Para cargos corporativos, bancos ou empresas globais, a graduação ainda é exigida com frequência."
+				},
+				{
+					"question": "Qual profissão de TI está em maior alta?",
+					"answer": "Engenharia de software, ciência de dados, cibersegurança, DevOps/SRE e perfis ligados a IA aplicada (engenheiro de machine learning, engenheiro de prompt, arquiteto de dados para IA) estão entre os mais buscados em 2025–2026."
+				},
+				{
+					"question": "Qual a diferença entre desenvolvedor, engenheiro de software e cientista de dados?",
+					"answer": "O desenvolvedor implementa funcionalidades e corrige bugs em aplicações. O engenheiro de software projeta sistemas, define arquitetura e pensa em escala e manutenção. O cientista de dados extrai insights de dados, constrói modelos estatísticos e apoia decisões de negócio — com forte base em programação e estatística."
+				},
+				{
+					"question": "Cibersegurança exige experiência em programação?",
+					"answer": "Ajuda, mas não é obrigatório em todos os níveis. Analistas júnior podem começar com certificações (Security+, CEH), redes e fundamentos de sistemas. Perfis mais avançados — pentest, resposta a incidentes, segurança de cloud — exigem scripting e conhecimento profundo de infraestrutura."
+				},
+				{
+					"question": "Tecnologia e Engenharia são a mesma área no O Que Faz?",
+					"answer": "São clusters complementares. Tecnologia foca em TI pura: software, dados, segurança e produto digital. Engenharia inclui ramos regulados pelo CREA (civil, produção, elétrica) e engenharias aplicadas (energia, robótica, materiais). Engenharia de software aparece nos dois contextos conforme a tag do artigo."
+				}
+			],
+			"tagAliases": ["tecnologia", "Tecnologia"]
+		},
+		{
+			"slug": "engenharia",
+			"title": "Engenharia",
+			"tagLabel": "Engenharia",
+			"description": "Profissões em Engenharia no Brasil: civil, software, produção, energia, robótica e sustentabilidade — formação, CREA e mercado de trabalho.",
+			"intro": "Engenharia é a área que transforma conhecimento científico em soluções concretas: pontes, fábricas, sistemas de energia, veículos autônomos, software embarcado e cidades mais sustentáveis. No Brasil, a profissão exige graduação reconhecida pelo MEC e registro no CREA para exercer atribuições regulamentadas. Além dos ramos clássicos — civil, produção, elétrica, mecânica —, o cluster inclui engenharias emergentes: energias renováveis, agronegócios inteligentes, robótica biomédica, computação quântica e materiais avançados. Use este hub para comparar trilhas, entender o dia a dia de cada engenheiro e planejar sua formação.",
+			"highlights": [
+				"Engenheiro civil, de software, de produção e de petróleo entre as profissões mais consultadas",
+				"Energias renováveis, veículos elétricos e sustentabilidade urbana em forte expansão",
+				"Robótica, automação industrial e sistemas autônomos como ramos de alto crescimento",
+				"Registro no CREA e responsabilidade técnica (ART) em projetos e obras",
+				"Convergência com TI: engenharia de cloud, machine learning aplicado e IoT"
+			],
+			"faq": [
+				{
+					"question": "Qual a diferença entre engenheiro e tecnólogo?",
+					"answer": "O engenheiro conclui bacharelado em Engenharia (cerca de cinco anos) e tem atribuições reguladas pelo CREA, podendo assinar projetos e responsabilizar-se tecnicamente. O tecnólogo faz curso superior de tecnologia (dois a três anos), com escopo de atuação mais delimitado pela legislação."
+				},
+				{
+					"question": "Engenheiro de software precisa de registro no CREA?",
+					"answer": "Depende da atuação e do estado. Projetos de infraestrutura física, obras e sistemas regulados exigem CREA. Desenvolvimento de software puro em empresas de tecnologia costuma ser exercido sem registro, embora alguns profissionais optem por registrá-se como engenheiros de computação."
+				},
+				{
+					"question": "Quais engenharias têm mais oportunidades no Brasil?",
+					"answer": "Civil (obras e infraestrutura), produção (indústria e logística), elétrica (energia e automação), de software (tecnologia) e ambiental/sustentabilidade (ESG e energias limpas) lideram a demanda. Petróleo e gás mantêm vagas regionais concentradas."
+				},
+				{
+					"question": "Posso migrar de outra área para engenharia?",
+					"answer": "Sim, mas exige nova graduação ou tecnólogo em área afim. Profissionais de exatas (matemática, física, computação) costumam ter vantagem. Quem já trabalha em TI pode considerar engenharia de software ou pós-graduação em gestão de projetos sem refazer todo o ciclo acadêmico."
+				},
+				{
+					"question": "Engenharia civil e construção civil são a mesma coisa?",
+					"answer": "Não exatamente. Engenharia civil é a profissão regulada (projeto, cálculo estrutural, gestão de obras). Construção civil é o setor que inclui também pedreiros, eletricistas, encanadores e mestres de obra — mapeados no hub Construção Civil do O Que Faz."
+				}
+			],
+			"tagAliases": ["engenharia", "Engenharia"]
+		},
+		{
+			"slug": "construcao-civil",
+			"title": "Construção Civil",
+			"tagLabel": "Construção Civil",
+			"description": "Profissões na Construção Civil: obras, reformas, instalações e gestão de projetos.",
+			"intro": "A construção civil emprega desde profissionais de execução em obra até gestores de projetos e especialistas em instalações. É um setor cíclico, mas com demanda constante em reformas, infraestrutura e manutenção.",
+			"highlights": [
+				"Entrada por cursos técnicos, experiência em obra ou ensino superior",
+				"Serviços especializados (hidráulica, elétrica, acabamento) em alta",
+				"Segurança do trabalho como requisito em todos os níveis"
+			],
+			"faq": [
+				{
+					"question": "Quais profissões da construção não exigem faculdade?",
+					"answer": "Pedreiro, pintor, encanador, gesseiro e eletricista podem ser acessados com curso técnico, aprendizagem e experiência — sempre com atenção a certificações e normas de segurança."
+				}
+			],
+			"tagAliases": ["construcao-civil", "Construção Civil"]
+		},
+		{
+			"slug": "direito",
+			"title": "Direito",
+			"tagLabel": "Direito",
+			"description": "Carreiras em Direito: advocacia, compliance, direito digital e áreas corporativas.",
+			"intro": "O Direito abrange desde a advocacia tradicional até nichos como propriedade intelectual, LGPD, crimes cibernéticos e consultoria regulatória. A formação passa pela graduação em Direito e pelo Exame da OAB para advogar.",
+			"highlights": [
+				"Crescimento do direito digital e de dados pessoais",
+				"Atuação em escritórios, empresas, setor público e autonomia",
+				"Pós-graduação como diferencial em nichos"
+			],
+			"faq": [
+				{
+					"question": "Todo bacharel em Direito é advogado?",
+					"answer": "Não. Para advogar é necessário passar na OAB. O diploma permite outras carreiras, como consultoria, compliance e concursos."
+				}
+			],
+			"tagAliases": ["direito", "Direito"]
+		},
+		{
+			"slug": "educacao",
+			"title": "Educação",
+			"tagLabel": "Educação",
+			"description": "Profissões em Educação: ensino, pedagogia, EdTech e formação de adultos.",
+			"intro": "Educadores atuam em salas de aula, plataformas digitais, consultoria pedagógica e produção de conteúdo de aprendizagem. A área combina propósito social com oportunidades em tecnologia educacional.",
+			"highlights": [
+				"Licenciatura e concursos como caminhos clássicos",
+				"EdTech e design instrucional em expansão",
+				"Formação continuada obrigatória em muitas redes"
+			],
+			"faq": [
+				{
+					"question": "Posso dar aula sem licenciatura?",
+					"answer": "Em escolas formais, em geral exige-se formação específica ou complementação pedagógica. Em treinamentos corporativos e cursos livres, as regras variam."
+				}
+			],
+			"tagAliases": ["educacao", "Educação"]
+		},
+		{
+			"slug": "financas",
+			"title": "Finanças",
+			"tagLabel": "Finanças",
+			"description": "Profissões em Finanças: bancos, investimentos, fintechs e análise financeira.",
+			"intro": "O mercado financeiro inclui bancos, corretoras, fintechs, seguros e consultoria. Profissionais lidam com crédito, investimentos, risco, tesouraria e produtos digitais — com forte exigência de ética e regulação.",
+			"highlights": [
+				"Certificações (CFA, CPA-20, etc.) valorizadas em investimentos",
+				"Fintechs ampliando vagas em produto e dados",
+				"Finanças verdes e ESG como tendência"
+			],
+			"faq": [
+				{
+					"question": "Finanças e contabilidade são a mesma coisa?",
+					"answer": "Não. Contabilidade foca registros e obrigações fiscais; finanças tratam de planejamento, investimentos, crédito e gestão de recursos."
+				}
+			],
+			"tagAliases": ["financas", "Finanças"]
+		},
+		{
+			"slug": "administracao",
+			"title": "Administração",
+			"tagLabel": "Administração",
+			"description": "Carreiras em Administração: gestão, projetos, RH, ESG e operações.",
+			"intro": "Profissionais de administração organizam pessoas, processos e recursos em empresas de todos os portes. A graduação em Administração abre portas para gestão, projetos, RH, logística e empreendedorismo.",
+			"highlights": [
+				"Versatilidade entre setores",
+				"Gestão de projetos e metodologias ágeis em alta",
+				"ESG e sustentabilidade corporativa como nichos"
+			],
+			"faq": [
+				{
+					"question": "O que faz um administrador no dia a dia?",
+					"answer": "Depende da função: pode planejar operações, liderar equipes, analisar indicadores, contratar talentos ou gerenciar projetos e orçamentos."
+				}
+			],
+			"tagAliases": ["administracao", "Administração"]
+		},
+		{
+			"slug": "comunicacao",
+			"title": "Comunicação e Marketing",
+			"tagLabel": "Comunicação",
+			"description": "Profissões em comunicação, marketing digital, jornalismo e produção de conteúdo.",
+			"intro": "Comunicadores conectam marcas e públicos por meio de texto, vídeo, redes sociais e estratégia. O digital ampliou demanda por SEO, conteúdo, mídias sociais e análise de performance.",
+			"highlights": [
+				"Portfólio e resultados mensuráveis contam muito",
+				"Marketing de conteúdo e mídia paga em crescimento",
+				"Trabalho freelance e agências como portas de entrada"
+			],
+			"faq": [
+				{
+					"question": "Marketing e publicidade são a mesma profissão?",
+					"answer": "São áreas relacionadas: publicidade tradicionalmente cria campanhas; marketing abrange estratégia, conteúdo, dados e relacionamento com o cliente."
+				}
+			],
+			"tagAliases": ["comunicacao", "Comunicação", "Marketing", "marketing"]
+		},
+		{
+			"slug": "design",
+			"title": "Design e Criatividade",
+			"tagLabel": "Design",
+			"description": "Profissões em design gráfico, UX/UI, experiência e criação visual.",
+			"intro": "Designers traduzem necessidades de usuários e marcas em interfaces, identidades visuais e experiências. UX/UI e design de produto digital estão entre as especialidades mais demandadas.",
+			"highlights": [
+				"Portfólio é o principal cartão de visitas",
+				"Ferramentas como Figma dominam o mercado digital",
+				"Colaboração próxima com desenvolvimento e produto"
+			],
+			"faq": [
+				{
+					"question": "Design gráfico e UX são a mesma carreira?",
+					"answer": "Não. Design gráfico foca comunicação visual; UX/UI foca experiência e usabilidade de produtos digitais. Há profissionais que transitam entre ambos."
+				}
+			],
+			"tagAliases": ["design", "Design", "artes", "Artes"]
+		},
+		{
+			"slug": "ciencias",
+			"title": "Ciências e Pesquisa",
+			"tagLabel": "Ciências",
+			"description": "Carreiras em ciências, pesquisa, biologia, estatística e dados aplicados à ciência.",
+			"intro": "Profissionais de ciências atuam em laboratórios, universidades, indústria farmacêutica, biotecnologia e análise de dados científicos. A formação costuma ser sólida em método científico, estatística e especialização técnica.",
+			"highlights": [
+				"Mestrado e doutorado abrem portas em pesquisa acadêmica",
+				"Bioinformática, genética e estatística em alta demanda",
+				"Interseção com saúde e tecnologia cria perfis híbridos"
+			],
+			"faq": [
+				{
+					"question": "Preciso de doutorado para trabalhar com ciências?",
+					"answer": "Depende da área: pesquisa acadêmica frequentemente exige pós-graduação stricto sensu; indústria e dados científicos podem contratar com graduação e especialização."
+				}
+			],
+			"tagAliases": ["ciencias", "Ciências"]
+		}
+	]
+}

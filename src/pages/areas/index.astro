@@ -1,0 +1,141 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BreadcrumbNav from '../../components/BreadcrumbNav.astro';
+import { getPublishedPosts } from '../../utils/blog';
+import { getClusterPath, getClusterStats, getAreasIndexPath } from '../../utils/clusters';
+import { breadcrumbListJsonLd } from '../../utils/schema';
+import { generateBreadcrumbs } from '../../utils/seo';
+
+const site = Astro.site!;
+const posts = await getPublishedPosts();
+const clusterStats = getClusterStats(posts);
+const canonicalPath = getAreasIndexPath();
+const blogName = import.meta.env.PUBLIC_BLOG_NAME ?? 'O Que Faz';
+
+const description =
+	'Explore profissões por área de atuação: Saúde, Tecnologia, Engenharia, Direito e mais. Hubs editoriais do O Que Faz.';
+
+const breadcrumbItems = generateBreadcrumbs(canonicalPath, site);
+---
+
+<BaseLayout
+	title={`Áreas de profissões — ${blogName}`}
+	description={description}
+	canonicalURL={canonicalPath}
+	ogImage="/og-default.png"
+	ogType="website"
+>
+	<Fragment slot="head">
+		<script type="application/ld+json" set:html={JSON.stringify(breadcrumbListJsonLd(breadcrumbItems))} />
+	</Fragment>
+
+	<div class="page-wrap page-wrap--wide areas-index">
+		<BreadcrumbNav items={breadcrumbItems} />
+
+		<header class="page-header">
+			<h1>Áreas de profissões</h1>
+			<p>
+				Navegue por <strong>clusters temáticos</strong>: cada área reúne profissões relacionadas, com links
+				internos que fortalecem o guia e ajudam você a comparar carreiras sem perder o contexto.
+			</p>
+		</header>
+
+		<ul class="areas-grid">
+			{clusterStats.map(({ cluster, count }) => (
+				<li>
+					<article class="areas-card">
+						<h2>
+							<a href={getClusterPath(cluster.slug)}>{cluster.title}</a>
+						</h2>
+						<p>{cluster.description}</p>
+						<p class="areas-card__count">
+							{count} {count === 1 ? 'publicação' : 'publicações'}
+						</p>
+						<a class="areas-card__link" href={getClusterPath(cluster.slug)}>
+							Explorar área →
+						</a>
+					</article>
+				</li>
+			))}
+		</ul>
+
+		<p class="areas-index__tags">
+			Também disponível por tag legada: <a href="/tags">ver categorias antigas</a>.
+		</p>
+	</div>
+</BaseLayout>
+
+<style>
+	.areas-grid {
+		display: grid;
+		gap: 1.25rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	@media (min-width: 640px) {
+		.areas-grid {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	@media (min-width: 960px) {
+		.areas-grid {
+			grid-template-columns: repeat(3, 1fr);
+		}
+	}
+
+	.areas-card {
+		height: 100%;
+		padding: 1.35rem;
+		background: #fff;
+		border: 1px solid var(--color-border);
+		border-top: 4px solid var(--color-brand);
+	}
+
+	.areas-card h2 {
+		margin: 0 0 0.5rem;
+		font-family: var(--font-display);
+		font-size: 1.25rem;
+	}
+
+	.areas-card h2 a {
+		text-decoration: none;
+		color: var(--color-text);
+	}
+
+	.areas-card h2 a:hover {
+		color: var(--color-brand);
+	}
+
+	.areas-card p {
+		margin: 0 0 0.75rem;
+		font-size: 0.9375rem;
+		color: var(--color-muted);
+		line-height: 1.55;
+	}
+
+	.areas-card__count {
+		font-size: 0.8125rem !important;
+		font-weight: 600;
+		color: var(--color-brand) !important;
+	}
+
+	.areas-card__link {
+		font-size: 0.875rem;
+		font-weight: 700;
+		color: var(--color-accent);
+		text-decoration: none;
+	}
+
+	.areas-card__link:hover {
+		text-decoration: underline;
+	}
+
+	.areas-index__tags {
+		margin-top: 2.5rem;
+		font-size: 0.875rem;
+		color: var(--color-muted);
+	}
+</style>

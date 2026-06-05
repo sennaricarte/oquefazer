@@ -1,0 +1,71 @@
+---
+import type { TagStat } from '../utils/blog';
+import { getBlogPagePath, getTagPath } from '../utils/blog';
+
+interface Props {
+	tagStats: TagStat[];
+	activeTag?: string;
+}
+
+const { tagStats, activeTag } = Astro.props;
+
+const tabs = tagStats
+	.filter(({ tag }) => !['artigos', 'profissões'].includes(tag.toLowerCase()))
+	.slice(0, 6);
+---
+
+<nav class="category-tabs" aria-label="Filtrar por categoria">
+	<ul>
+		<li>
+			<a
+				href={getBlogPagePath(1)}
+				class:list={[{ 'is-active': !activeTag }]}
+				aria-current={!activeTag ? 'page' : undefined}
+			>
+				Todas
+			</a>
+		</li>
+		{tabs.map(({ tag }) => (
+			<li>
+				<a
+					href={getTagPath(tag)}
+					class:list={[{ 'is-active': activeTag === tag }]}
+					aria-current={activeTag === tag ? 'page' : undefined}
+				>
+					{tag}
+				</a>
+			</li>
+		))}
+	</ul>
+</nav>
+
+<style>
+	.category-tabs ul {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		margin: 0 0 1.5rem;
+		padding: 0;
+		list-style: none;
+	}
+
+	.category-tabs a {
+		display: inline-block;
+		padding: 0.45rem 1rem;
+		font-size: 0.8125rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		text-decoration: none;
+		color: var(--color-text-soft);
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
+	}
+
+	.category-tabs a:hover,
+	.category-tabs a.is-active {
+		color: #fff;
+		background: var(--color-dark);
+		border-color: var(--color-dark);
+	}
+</style>

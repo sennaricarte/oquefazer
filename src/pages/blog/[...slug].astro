@@ -1,0 +1,415 @@
+---
+import { getEntry, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import MagazineCard from '../../components/MagazineCard.astro';
+import BreadcrumbNav from '../../components/BreadcrumbNav.astro';
+import ClusterHubBanner from '../../components/ClusterHubBanner.astro';
+import ProfessionPairCallout from '../../components/ProfessionPairCallout.astro';
+import OptimizedImage from '../../components/OptimizedImage.astro';
+import { resolveImageSrc } from '../../utils/images';
+import {
+	absoluteUrl,
+	getAdjacentPosts,
+	getPostPath,
+	getPublishedPosts,
+	getTagPath,
+	dedupePostTags,
+	normalizeTagKey,
+} from '../../utils/blog';
+import {
+	getClusterPath,
+	getClusterSiblings,
+	resolveCluster,
+	resolveContentType,
+} from '../../utils/clusters';
+import { calculateReadingTime, countWords, formatReadingTime } from '../../utils/readingTime';
+import { breadcrumbListJsonLd } from '../../utils/schema';
+import { generatePostBreadcrumbs, getDefaultOgImageUrl } from '../../utils/seo';
+
+export async function getStaticPaths() {
+	const posts = await getPublishedPosts();
+	return posts.map((post) => ({
+		params: { slug: post.id },
+	}));
+}
+
+const slugParam = Astro.params.slug;
+const postId = Array.isArray(slugParam) ? slugParam.join('/') : slugParam;
+
+if (!postId) {
+	return Astro.redirect('/404');
+}
+
+const post = await getEntry('blog', postId);
+
+if (!post || post.data.draft) {
+	return Astro.redirect('/404');
+}
+
+const site = Astro.site!;
+const blogName = import.meta.env.PUBLIC_BLOG_NAME ?? 'O Que Faz';
+const allPosts = await getPublishedPosts();
+const { Content } = await render(post);
+
+const wordCount = countWords(post.body ?? '');
+const readingMinutes = post.data.readingTime ?? calculateReadingTime(post.body ?? '');
+const canonicalPath = post.data.canonicalURL ?? getPostPath(post);
+const ogImage = post.data.heroImage
+	? resolveImageSrc(post.data.heroImage)
+	: getDefaultOgImageUrl(site);
+const heroPreloadSrc = post.data.heroImage ? resolveImageSrc(post.data.heroImage) : undefined;
+const { prev, next } = getAdjacentPosts(allPosts, post.id);
+const cluster = resolveCluster(post);
+const clusterSiblings = getClusterSiblings(allPosts, post, 6);
+const contentType = resolveContentType(post);
+const relatedProfession = post.data.relatedProfession
+	? allPosts.find((p) => p.id === post.data.relatedProfession)
+	: undefined;
+
+const breadcrumbItems = generatePostBreadcrumbs(post, site);
+
+const META_TAGS = new Set(['profissões', 'profissoes', 'artigos']);
+
+const displayTags = dedupePostTags(post.data.tags).filter((tag) => {
+	const key = normalizeTagKey(tag);
+	if (META_TAGS.has(key)) return false;
+	if (cluster && key === normalizeTagKey(cluster.tagLabel)) return false;
+	return true;
+});
+
+const blogPostingJsonLd = {
+	'@context': 'https://schema.org',
+	'@type': 'BlogPosting',
+	headline: post.data.title,
+	description: post.data.description,
+	image: ogImage.startsWith('http') ? ogImage : new URL(ogImage, site).href,
+	wordCount,
+	timeRequired: `PT${readingMinutes}M`,
+	author: {
+		'@type': 'Person',
+		name: post.data.author,
+	},
+	datePublished: post.data.pubDate.toISOString(),
+	dateModified: (post.data.updatedDate ?? post.data.pubDate).toISOString(),
+	publisher: {
+		'@type': 'Organization',
+		name: blogName,
+		logo: {
+			'@type': 'ImageObject',
+			url: new URL('/favicon.svg', site).href,
+		},
+	},
+	mainEntityOfPage: {
+		'@type': 'WebPage',
+		'@id': absoluteUrl(canonicalPath, site),
+	},
+};
+---
+
+<BaseLayout
+	title={post.data.title}
+	description={post.data.description}
+	canonicalURL={canonicalPath}
+	ogImage={ogImage}
+	ogType="article"
+	noindex={post.data.noindex}
+	author={post.data.author}
+	datePublished={post.data.pubDate}
+	dateModified={post.data.updatedDate ?? post.data.pubDate}
+	heroImageSrc={heroPreloadSrc}
+	logoSrc={heroPreloadSrc}
+	wordCount={wordCount}
+	readingTimeMinutes={readingMinutes}
+>
+	<Fragment slot="head">
+		{prev && <link rel="prev" href={getPostPath(prev)} />}
+		{next && <link rel="next" href={getPostPath(next)} />}
+		<script
+			type="application/ld+json"
+			set:html={JSON.stringify(breadcrumbListJsonLd(breadcrumbItems))}
+		/>
+		<script type="application/ld+json" set:html={JSON.stringify(blogPostingJsonLd)} />
+	</Fragment>
+
+	<article class="post-page">
+		<div class="page-wrap page-wrap--article">
+			<BreadcrumbNav items={breadcrumbItems} />
+
+			{cluster && <ClusterHubBanner cluster={cluster} />}
+
+			{relatedProfession && (
+				<ProfessionPairCallout post={post} related={relatedProfession} />
+			)}
+
+			<header class="post-header">
+				<p class="post-meta">
+					<time datetime={post.data.pubDate.toISOString()}>
+						{post.data.pubDate.toLocaleDateString('pt-BR', {
+							day: '2-digit',
+							month: 'long',
+							year: 'numeric',
+						})}
+					</time>
+					<span aria-hidden="true"> · </span>
+					<span>{formatReadingTime(readingMinutes)}</span>
+					{contentType === 'ficha' && (
+						<>
+							<span aria-hidden="true"> · </span>
+							<span class="post-type">Ficha resumida</span>
+						</>
+					)}
+					{contentType === 'guia' && (
+						<>
+							<span aria-hidden="true"> · </span>
+							<span class="post-type">Guia completo</span>
+						</>
+					)}
+					<span aria-hidden="true"> · </span>
+					<span>{wordCount} palavras</span>
+				</p>
+				<h1>{post.data.title}</h1>
+				<p class="post-lead">{post.data.description}</p>
+				<ul class="post-tags" aria-label="Tags e área">
+					{cluster && (
+						<li>
+							<a class="post-tags__cluster" href={getClusterPath(cluster.slug)}>
+								Área: {cluster.title}
+							</a>
+						</li>
+					)}
+					{displayTags.map((tag) => (
+						<li>
+							<a href={getTagPath(tag)}>{tag}</a>
+						</li>
+					))}
+				</ul>
+			</header>
+
+			{post.data.heroImage && (
+				<figure class="post-hero">
+					<OptimizedImage
+						src={post.data.heroImage}
+						alt={post.data.heroImageAlt ?? post.data.title}
+						width={1200}
+						height={630}
+						loading="eager"
+						fetchpriority="high"
+					/>
+				</figure>
+			)}
+
+			<div class="post-content">
+				<Content />
+			</div>
+
+			<nav class="post-adjacent" aria-label="Posts anterior e próximo">
+				{prev ? (
+					<a href={getPostPath(prev)} rel="prev" class="post-adjacent__link">
+						<span class="post-adjacent__label">← Anterior</span>
+						<span class="post-adjacent__title">{prev.data.title}</span>
+					</a>
+				) : (
+					<span />
+				)}
+				{next ? (
+					<a href={getPostPath(next)} rel="next" class="post-adjacent__link post-adjacent__link--next">
+						<span class="post-adjacent__label">Próximo →</span>
+						<span class="post-adjacent__title">{next.data.title}</span>
+					</a>
+				) : (
+					<span />
+				)}
+			</nav>
+
+			{relatedProfession && (
+				<section class="related related--pair" aria-labelledby="pair-heading">
+					<h2 id="pair-heading">Conteúdo complementar</h2>
+					<MagazineCard
+						post={relatedProfession}
+						variant="list"
+						readingMinutes={
+							relatedProfession.data.readingTime ??
+							calculateReadingTime(relatedProfession.body ?? '')
+						}
+					/>
+				</section>
+			)}
+
+			{clusterSiblings.length > 0 && (
+				<section class="related" aria-labelledby="related-heading">
+					<h2 id="related-heading">
+						Mais profissões em {cluster?.title ?? 'esta área'}
+					</h2>
+					<p class="related__hint">
+						{contentType === 'guia'
+							? 'Explore fichas e guias do mesmo cluster temático.'
+							: 'Profissões relacionadas no mesmo cluster de conteúdo.'}
+					</p>
+					<div class="related-list">
+						{clusterSiblings.map((relatedPost) => (
+							<MagazineCard
+								post={relatedPost}
+								variant="list"
+								readingMinutes={
+									relatedPost.data.readingTime ??
+									calculateReadingTime(relatedPost.body ?? '')
+								}
+							/>
+						))}
+					</div>
+					{cluster && (
+						<p class="related__hub">
+							<a class="link-brand" href={getClusterPath(cluster.slug)}>
+								Ver todas em {cluster.title} →
+							</a>
+						</p>
+					)}
+				</section>
+			)}
+		</div>
+	</article>
+</BaseLayout>
+
+<style>
+	.page-wrap--article {
+		max-width: 46rem;
+		margin: 0 auto;
+		padding: 2rem 1rem 3rem;
+	}
+
+	.post-header h1 {
+		font-family: var(--font-display);
+	}
+
+	.post-meta {
+		margin: 0 0 0.75rem;
+		font-size: 0.875rem;
+		color: #64748b;
+	}
+
+	.post-type {
+		font-weight: 600;
+		color: var(--color-accent);
+	}
+
+	.post-header h1 {
+		margin: 0 0 1rem;
+		font-size: clamp(1.875rem, 4vw, 2.5rem);
+		line-height: 1.15;
+	}
+
+	.post-lead {
+		margin: 0 0 1rem;
+		font-size: 1.125rem;
+		color: #334155;
+	}
+
+	.post-tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		margin: 0 0 2rem;
+		padding: 0;
+		list-style: none;
+	}
+
+	.post-tags a {
+		padding: 0.25rem 0.65rem;
+		font-size: 0.8125rem;
+		text-decoration: none;
+		color: var(--color-brand);
+		background: var(--color-brand-subtle);
+		border-radius: 9999px;
+	}
+
+	.post-tags__cluster {
+		background: var(--color-dark) !important;
+		color: #fff !important;
+	}
+
+	.related__hint {
+		margin: -0.75rem 0 1.25rem;
+		font-size: 0.9375rem;
+		color: var(--color-muted);
+	}
+
+	.related__hub {
+		margin: 1.5rem 0 0;
+	}
+
+	.post-hero {
+		margin: 0 0 2rem;
+	}
+
+	.post-hero :global(.optimized-image) {
+		border-radius: 0.5rem;
+	}
+
+	.post-content :global(h2) {
+		margin-top: 2rem;
+		font-size: 1.5rem;
+	}
+
+	.post-content :global(p),
+	.post-content :global(li) {
+		color: #334155;
+	}
+
+	.post-adjacent {
+		display: grid;
+		gap: 1rem;
+		margin-top: 3rem;
+		padding-top: 2rem;
+		border-top: 1px solid #e2e8f0;
+	}
+
+	@media (min-width: 640px) {
+		.post-adjacent {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+
+	.post-adjacent__link {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+		text-decoration: none;
+		color: inherit;
+	}
+
+	.post-adjacent__link--next {
+		text-align: right;
+	}
+
+	.post-adjacent__label {
+		font-size: 0.8125rem;
+		color: var(--color-brand);
+		font-weight: 600;
+	}
+
+	.post-adjacent__title {
+		font-size: 0.9375rem;
+		color: #0f172a;
+	}
+
+	.post-adjacent__link:hover .post-adjacent__title {
+		text-decoration: underline;
+	}
+
+	.related {
+		margin-top: 3rem;
+		padding-top: 2rem;
+		border-top: 1px solid #e2e8f0;
+	}
+
+	.related h2 {
+		margin: 0 0 1.5rem;
+		font-size: 1.375rem;
+	}
+
+	.related-list {
+		display: flex;
+		flex-direction: column;
+		gap: 2rem;
+	}
+</style>

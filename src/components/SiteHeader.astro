@@ -1,0 +1,157 @@
+---
+import { Image } from 'astro:assets';
+import { loadEnv } from 'vite';
+import logo from '../assets/logo-o-que-faz.png';
+
+const { SITE_NAME } = loadEnv(import.meta.env.MODE, process.cwd(), '');
+const siteName =
+	SITE_NAME || import.meta.env.PUBLIC_BLOG_NAME || import.meta.env.SITE_NAME || 'O Que Faz';
+
+const currentPath = Astro.url.pathname;
+const nav = [
+	{ href: '/', label: 'Início' },
+	{ href: '/blog', label: 'Profissões' },
+	{ href: '/areas', label: 'Áreas' },
+	{ href: '/sobre', label: 'Sobre' },
+	{ href: '/busca', label: 'Busca' },
+];
+
+function isActive(href: string): boolean {
+	if (href === '/') return currentPath === '/';
+	return currentPath === href || currentPath.startsWith(`${href}/`);
+}
+---
+
+<header class="mag-header">
+	<div class="mag-header__inner">
+		<a class="mag-header__brand" href="/">
+			<Image
+				src={logo}
+				alt={`${siteName} — guia de profissões`}
+				width={44}
+				height={44}
+				format="webp"
+				quality="mid"
+				class="mag-header__logo-img"
+				loading="eager"
+				fetchpriority="high"
+			/>
+			<span class="mag-header__name">{siteName}</span>
+		</a>
+
+		<nav class="mag-header__nav" aria-label="Principal">
+			<ul>
+				{nav.map((item) => (
+					<li>
+						<a
+							href={item.href}
+							class:list={['mag-header__link', { 'is-active': isActive(item.href) }]}
+							aria-current={isActive(item.href) ? 'page' : undefined}
+						>
+							{item.label}
+						</a>
+					</li>
+				))}
+			</ul>
+		</nav>
+
+		<a class="mag-header__cta" href="/blog">Ver profissões</a>
+	</div>
+</header>
+
+<style>
+	.mag-header {
+		position: sticky;
+		top: 0;
+		z-index: 50;
+		background: #fff;
+		border-bottom: 1px solid var(--color-border);
+		box-shadow: 0 1px 0 rgba(15, 23, 42, 0.04);
+	}
+
+	.mag-header__inner {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem 1.5rem;
+		max-width: var(--page-width-wide);
+		margin: 0 auto;
+		padding: 0.9rem 1rem;
+	}
+
+	.mag-header__brand {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		text-decoration: none;
+		color: var(--color-text);
+	}
+
+	.mag-header__logo-img {
+		width: 2.75rem;
+		height: 2.75rem;
+		flex-shrink: 0;
+		border-radius: 0.35rem;
+		object-fit: contain;
+	}
+
+	.mag-header__name {
+		font-family: var(--font-display);
+		font-size: clamp(1.25rem, 3vw, 1.75rem);
+		font-weight: 700;
+		line-height: 1.1;
+	}
+
+	.mag-header__nav ul {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.25rem 1.5rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.mag-header__link {
+		font-size: 0.9375rem;
+		font-weight: 600;
+		text-decoration: none;
+		color: var(--color-muted);
+	}
+
+	.mag-header__link:hover,
+	.mag-header__link.is-active {
+		color: var(--color-brand);
+	}
+
+	.mag-header__cta {
+		display: none;
+		padding: 0.55rem 1.1rem;
+		font-size: 0.8125rem;
+		font-weight: 700;
+		text-decoration: none;
+		color: #fff;
+		background: var(--color-brand);
+	}
+
+	.mag-header__cta:hover {
+		background: var(--color-brand-hover);
+	}
+
+	@media (min-width: 900px) {
+		.mag-header__cta {
+			display: inline-block;
+		}
+	}
+
+	@media (max-width: 720px) {
+		.mag-header__inner {
+			flex-direction: column;
+			align-items: flex-start;
+		}
+
+		.mag-header__nav ul {
+			gap: 0.75rem 1rem;
+		}
+	}
+</style>

@@ -1,0 +1,75 @@
+---
+import type { SeoProps } from '../types/seo';
+import { truncateDescription } from '../utils/seo';
+
+interface Props extends SeoProps {}
+
+const {
+	title,
+	description,
+	canonicalURL,
+	ogImage,
+	ogType = 'website',
+	noindex = false,
+} = Astro.props;
+
+const site = Astro.site;
+if (!site) {
+	throw new Error('SEO.astro: defina `site` em astro.config.mjs para gerar URLs absolutas.');
+}
+
+const blogName = import.meta.env.PUBLIC_BLOG_NAME ?? 'O Que Faz';
+
+function absoluteUrl(path: string): string {
+	return new URL(path, site).href;
+}
+
+const pageTitle = `${title} | ${blogName}`;
+const metaDescription = truncateDescription(description);
+const canonical = absoluteUrl(canonicalURL);
+const imageUrl = absoluteUrl(ogImage);
+const robotsContent = noindex ? 'noindex, nofollow' : 'index, follow';
+
+/** Artigos usam BlogPosting apenas no `<head>` da página do post — evita duplicata. */
+const webPageSchema =
+	ogType === 'website'
+		? {
+				'@context': 'https://schema.org',
+				'@type': 'WebPage',
+				name: pageTitle,
+				description: metaDescription,
+				url: canonical,
+				inLanguage: 'pt-BR',
+			}
+		: null;
+---
+
+<title>{pageTitle}</title>
+<meta name="description" content={metaDescription} />
+<link rel="canonical" href={canonical} />
+
+<meta property="og:title" content={title} />
+<meta property="og:description" content={metaDescription} />
+<meta property="og:image" content={imageUrl} />
+<meta property="og:url" content={canonical} />
+<meta property="og:type" content={ogType} />
+<meta property="og:site_name" content={blogName} />
+<meta property="og:locale" content="pt_BR" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={metaDescription} />
+<meta name="twitter:image" content={imageUrl} />
+
+<meta name="robots" content={robotsContent} />
+
+{import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION && (
+	<meta
+		name="google-site-verification"
+		content={import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION}
+	/>
+)}
+
+{webPageSchema && (
+	<script type="application/ld+json" set:html={JSON.stringify(webPageSchema)} />
+)}

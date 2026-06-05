@@ -1,0 +1,42 @@
+---
+import type { BlogEntry } from '../utils/blog';
+import type { TagStat } from '../utils/blog';
+import MagazineSidebar from './MagazineSidebar.astro';
+
+interface Props {
+	sidebarPosts: BlogEntry[];
+	tagStats: TagStat[];
+	siteName: string;
+}
+
+const { sidebarPosts, tagStats, siteName } = Astro.props;
+---
+
+<div class="mag-shell">
+	<div class="mag-shell__main">
+		<slot />
+	</div>
+	<MagazineSidebar recentPosts={sidebarPosts} tagStats={tagStats} siteName={siteName} />
+</div>
+
+<style>
+	.mag-shell {
+		display: grid;
+		gap: 2rem;
+		max-width: var(--page-width-wide);
+		margin: 0 auto;
+		padding: 2rem 1rem 3rem;
+	}
+
+	@media (min-width: 1024px) {
+		.mag-shell {
+			grid-template-columns: minmax(0, 1fr) 320px;
+			align-items: start;
+		}
+	}
+
+	.mag-shell__main {
+		min-width: 0;
+	}
+</style>
+

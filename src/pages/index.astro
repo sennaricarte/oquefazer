@@ -1,0 +1,174 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CategoryTabs from '../components/CategoryTabs.astro';
+import HeroSlider from '../components/HeroSlider.astro';
+import MagazineCard from '../components/MagazineCard.astro';
+import MagazineShell from '../components/MagazineShell.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import {
+	getPublishedPosts,
+	getTagStats,
+	getPostsByTag,
+} from '../utils/blog';
+import { calculateReadingTime } from '../utils/readingTime';
+import { breadcrumbListJsonLd, websiteJsonLd } from '../utils/schema';
+import { generateBreadcrumbs } from '../utils/seo';
+
+const site = Astro.site!;
+const blogName = import.meta.env.PUBLIC_BLOG_NAME ?? 'O Que Faz';
+const allPosts = await getPublishedPosts();
+const tagStats = getTagStats(allPosts);
+
+const heroPosts = [
+	...allPosts.filter((post) => post.data.heroImage),
+	...allPosts.filter((post) => !post.data.heroImage),
+].slice(0, 3);
+
+const trendingPosts = allPosts.slice(0, 8);
+const featuredGrid = allPosts
+	.filter((post) => post.data.heroImage)
+	.slice(0, 4);
+const mainList = allPosts.slice(0, 6);
+const todayList = allPosts.slice(6, 12);
+const articlePosts = getPostsByTag(allPosts, 'artigos').slice(0, 4);
+
+const websiteSchema = websiteJsonLd(site, blogName);
+const breadcrumbItems = generateBreadcrumbs('/', site);
+
+const siteDescription =
+	import.meta.env.PUBLIC_BLOG_DESCRIPTION ??
+	'Descubra o que faz cada profissão: formação, habilidades, áreas de atuação e perspectivas de carreira em português.';
+---
+
+<BaseLayout
+	title="Início"
+	description={siteDescription}
+	canonicalURL="/"
+	ogImage="/og-default.png"
+	ogType="website"
+>
+	<Fragment slot="head">
+		<script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
+		<script
+			type="application/ld+json"
+			set:html={JSON.stringify(breadcrumbListJsonLd(breadcrumbItems))}
+		/>
+	</Fragment>
+
+	<HeroSlider posts={heroPosts} />
+
+	<MagazineShell sidebarPosts={allPosts} tagStats={tagStats} siteName={blogName}>
+		<section class="home-section">
+			<SectionHeading
+				title="Em destaque"
+				subtitle="As profissões e artigos mais relevantes do momento"
+				href="/blog"
+			/>
+			<CategoryTabs tagStats={tagStats} />
+			<div class="home-grid home-grid--4">
+				{(featuredGrid.length ? featuredGrid : allPosts.slice(0, 4)).map((post) => (
+					<MagazineCard
+						post={post}
+						variant="grid"
+						readingMinutes={post.data.readingTime ?? calculateReadingTime(post.body ?? '')}
+					/>
+				))}
+			</div>
+		</section>
+
+		{articlePosts.length > 0 && (
+			<section class="home-section">
+				<SectionHeading
+					title="Artigos especiais"
+					subtitle="Guias aprofundados sobre ofícios e serviços"
+				/>
+				<div class="home-list">
+					{articlePosts.map((post) => (
+						<MagazineCard
+							post={post}
+							variant="list"
+							readingMinutes={post.data.readingTime ?? calculateReadingTime(post.body ?? '')}
+						/>
+					))}
+				</div>
+			</section>
+		)}
+
+		<section class="home-section">
+			<SectionHeading
+				title="Principais publicações"
+				subtitle="Conteúdo editorial sobre carreiras e mercado de trabalho"
+				href="/blog"
+			/>
+			<div class="home-list">
+				{mainList.map((post) => (
+					<MagazineCard
+						post={post}
+						variant="list"
+						readingMinutes={post.data.readingTime ?? calculateReadingTime(post.body ?? '')}
+					/>
+				))}
+			</div>
+		</section>
+
+		<section class="home-section home-section--muted">
+			<SectionHeading title="Leia também hoje" subtitle="Mais profissões para explorar agora" />
+			<div class="home-compact">
+				{todayList.map((post) => (
+					<MagazineCard post={post} variant="compact" />
+				))}
+			</div>
+		</section>
+	</MagazineShell>
+</BaseLayout>
+
+<style>
+	.home-section {
+		margin-bottom: 2.5rem;
+	}
+
+	.home-section--muted {
+		padding: 1.5rem;
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
+	}
+
+	.home-grid {
+		display: grid;
+		gap: 1.25rem;
+	}
+
+	.home-grid--4 {
+		grid-template-columns: 1fr;
+	}
+
+	@media (min-width: 640px) {
+		.home-grid--4 {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	@media (min-width: 1100px) {
+		.home-grid--4 {
+			grid-template-columns: repeat(4, 1fr);
+		}
+	}
+
+	.home-list {
+		display: flex;
+		flex-direction: column;
+		gap: 1.5rem;
+	}
+
+	.home-compact {
+		display: grid;
+		gap: 0;
+	}
+
+	@media (min-width: 640px) {
+		.home-compact {
+			grid-template-columns: repeat(2, 1fr);
+			column-gap: 2rem;
+		}
+	}
+</style>
