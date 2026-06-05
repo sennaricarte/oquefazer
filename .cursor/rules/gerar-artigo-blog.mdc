@@ -67,7 +67,8 @@ Respeite o schema em `src/content.config.ts`:
 npm run fetch:image -- --query "enfermeiro hospital profissão" --slug enfermeiro
 ```
 
-- Baixa para `src/content/blog/{slug}/images/` e atualiza `heroImage` + `heroImageAlt` se o post existir.
+- Baixa para `src/content/blog/{slug}/images/`, **redimensiona automaticamente** (capa ≤1280px, inline ≤800px) e atualiza `heroImage` + `heroImageAlt` se o post existir.
+- Presets de exibição em `src/data/image-presets.json`; componentes usam `variant` no `OptimizedImage` (não inventar width/sizes manualmente).
 - `--source pexels` ou `pixabay` força um provedor; omitir = Pexels primeiro, Pixabay como fallback.
 - Crédito do fotógrafo fica em `{slug}/images/{arquivo}.meta.json` — incluir linha de crédito no rodapé do artigo quando a licença exigir.
 - Toda imagem baixada fica **pendente** até `npm run images:approve`. Processo completo: `docs/IMAGENS_REVISAO.md`.

@@ -36,10 +36,10 @@ function statusLabel(status) {
 	return '📋 legado (revisar)';
 }
 
-function main() {
+async function main() {
 	const args = parseArgs(process.argv);
 	const entries = syncRegistryFromPosts();
-	const { issues, warnings } = analyzeImages(entries);
+	const { issues, warnings } = await analyzeImages(entries);
 
 	let list = entries;
 	if (args.slug) list = list.filter((e) => e.slug === args.slug);
@@ -136,4 +136,7 @@ function main() {
 	console.log(`${list.length} imagem(ns) em ${bySlug.size} artigo(s)`);
 }
 
-main();
+main().catch((error) => {
+	console.error(error.message);
+	process.exit(1);
+});

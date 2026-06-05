@@ -19,6 +19,7 @@ import {
 	syncRegistryFromPosts,
 	writeImageMeta,
 } from './lib/image-registry.mjs';
+import { optimizeImageFile } from './lib/image-optimize.mjs';
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -236,6 +237,11 @@ async function main() {
 	}
 
 	await downloadImage(meta.url, destPath);
+	const optimized = await optimizeImageFile(destPath, { role });
+	console.log(
+		`Otimizada (${role}): ${optimized.width}×${optimized.height}px` +
+			(optimized.resized ? ` — redimensionada de ${optimized.inputWidth}px` : ''),
+	);
 	const alt = buildAltText(meta, args.query);
 	const credit = buildCreditLine(meta);
 

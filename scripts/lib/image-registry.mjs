@@ -1,7 +1,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
+import sharp from 'sharp';
 import { blogDir, projectRoot } from '../import-shared.mjs';
+import { getSourceMaxWidth } from './image-presets.mjs';
 
 export const REGISTRY_PATH = path.join(projectRoot, 'src', 'data', 'image-registry.json');
 export const GENERIC_ALT = /^imagem ilustrativa do artigo$/i;
@@ -281,7 +283,7 @@ export function isCandidateAllowed(candidate, reserved) {
 	return true;
 }
 
-export function analyzeImages(entries) {
+export async function analyzeImages(entries) {
 	const issues = [];
 	const warnings = [];
 
@@ -340,6 +342,25 @@ export function analyzeImages(entries) {
 				relPath: entry.relPath,
 				message: `Imagem reprovada ainda referenciada: ${entry.relPath}`,
 			});
+		}
+
+		if (entry.fileExists && entry.relPath) {
+			const absPath = resolvePostImagePath(entry.slug, entry.relPath);
+			try {
+				const meta = await sharp(absPath).metadata();
+				const maxWidth = getSourceMaxWidth(entry.role === 'hero' ? 'hero' : 'inline');
+				if ((meta.width ?? 0) > maxWidth) {
+					warnings.push({
+						severity: 'warn',
+						code: 'oversized-source',
+						slug: entry.slug,
+						relPath: entry.relPath,
+						message: `Arquivo fonte ${meta.width}px (máx. ${maxWidth}px) — rode npm run images:normalize`,
+					});
+				}
+			} catch {
+				// ignora formatos não suportados pelo sharp
+			}
 		}
 
 		const slugUses = bySlugFile.get(entry.slug) ?? [];

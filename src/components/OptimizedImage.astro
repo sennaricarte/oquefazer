@@ -1,52 +1,52 @@
 ---
 import { Image, Picture } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
+import {
+	getImagePreset,
+	resolveImageQuality,
+	type ImageVariant,
+} from '../utils/image-presets';
 
 interface Props {
 	src: ImageMetadata | string;
 	alt: string;
-	width: number;
-	height: number;
+	/** Preset alinhado ao slot de exibição — garante srcset/sizes corretos. */
+	variant: ImageVariant;
 	loading?: 'lazy' | 'eager';
 	fetchpriority?: 'high' | 'low' | 'auto';
 	class?: string;
-	/** Larguras geradas no srcset — alinhar ao tamanho máximo exibido na tela. */
+	/** Sobrescreve apenas se o layout exigir exceção documentada. */
+	width?: number;
+	height?: number;
 	widths?: number[];
-	/** Atributo sizes para o navegador escolher o arquivo certo do srcset. */
 	sizes?: string;
-	/** 0–100; padrão mais baixo em lazy para reduzir peso. */
 	quality?: 'low' | 'mid' | 'high' | number;
 }
 
 const {
 	src,
 	alt,
-	width,
-	height,
+	variant,
 	loading = 'lazy',
 	fetchpriority,
 	class: className,
-	widths,
-	sizes,
-	quality,
+	width: widthOverride,
+	height: heightOverride,
+	widths: widthsOverride,
+	sizes: sizesOverride,
+	quality: qualityOverride,
 } = Astro.props;
 
 if (!alt?.trim()) {
 	throw new Error('OptimizedImage: o atributo alt é obrigatório.');
 }
 
-function buildWidths(displayWidth: number): number[] {
-	const candidates = [
-		Math.round(displayWidth * 0.75),
-		displayWidth,
-		Math.round(displayWidth * 1.25),
-	];
-	return [...new Set(candidates.filter((w) => w >= 160))].sort((a, b) => a - b);
-}
-
-const resolvedWidths = widths ?? buildWidths(width);
-const resolvedSizes = sizes ?? `(max-width: ${width}px) 100vw, ${width}px`;
-const resolvedQuality = quality ?? (loading === 'eager' ? 62 : 50);
+const preset = getImagePreset(variant);
+const width = widthOverride ?? preset.width;
+const height = heightOverride ?? preset.height;
+const resolvedWidths = widthsOverride ?? preset.widths;
+const resolvedSizes = sizesOverride ?? preset.sizes;
+const resolvedQuality = qualityOverride ?? resolveImageQuality(preset, loading);
 
 const aspectRatio = `${width} / ${height}`;
 const isSvg =

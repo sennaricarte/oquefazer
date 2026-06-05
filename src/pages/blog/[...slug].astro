@@ -190,11 +190,7 @@ const blogPostingJsonLd = {
 					<OptimizedImage
 						src={post.data.heroImage}
 						alt={post.data.heroImageAlt ?? post.data.title}
-						width={768}
-						height={403}
-						widths={[480, 640, 768]}
-						sizes="(min-width: 768px) min(48rem, 100vw), 100vw"
-						quality={62}
+						variant="hero-post"
 						loading="eager"
 						fetchpriority="high"
 					/>

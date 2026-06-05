@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { optimizeImageFile } from './lib/image-optimize.mjs';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 
@@ -146,6 +147,8 @@ export async function downloadImage(url, destDir, usedNames) {
 	if (!usedNames.has(destPath)) {
 		const buffer = Buffer.from(await response.arrayBuffer());
 		fs.writeFileSync(destPath, buffer);
+		const role = fileName.startsWith('hero') ? 'hero' : 'inline';
+		await optimizeImageFile(destPath, { role });
 		usedNames.add(destPath);
 	}
 

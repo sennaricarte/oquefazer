@@ -11,10 +11,10 @@ function parseArgs(argv) {
 	return { strict: argv.includes('--strict') };
 }
 
-function main() {
+async function main() {
 	const { strict } = parseArgs(process.argv);
 	const entries = syncRegistryFromPosts();
-	const { issues, warnings } = analyzeImages(entries);
+	const { issues, warnings } = await analyzeImages(entries);
 
 	for (const item of warnings) {
 		console.warn(`⚠ ${item.slug}: ${item.message}`);
@@ -34,4 +34,7 @@ function main() {
 	}
 }
 
-main();
+main().catch((error) => {
+	console.error(error.message);
+	process.exit(1);
+});
