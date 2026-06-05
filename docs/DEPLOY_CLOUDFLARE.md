@@ -163,7 +163,7 @@ Se aparecer **"Running custom build 'npm run build' failed"** e referência a `w
    - **Build output directory:** `dist`
    - **Deploy command:** deixe **vazio** (não use `wrangler deploy`)
 3. **Install command** (avançado, opcional): `npm ci` em vez de `npm install`
-4. O repositório inclui `wrangler.toml` com `pages_build_output_dir = "./dist"` para fluxos que exigem Wrangler.
+4. O repositório inclui `wrangler.toml` com `[assets] directory = "./dist"` (Workers) e `pages_build_output_dir` (Pages).
 
 ### Workers com Git (seu caso atual)
 
@@ -179,6 +179,7 @@ Se aparecer **"Running custom build 'npm run build' failed"** e referência a `w
 
 | Sintoma | Causa provável | Solução |
 |---------|----------------|---------|
+| Deploy falha pedindo `--assets=./dist` ou `[assets]` | Workers sem diretório de assets | `wrangler.toml` com `[assets] directory = "./dist"` |
 | Build falha em < 2 min + wrangler no log | Node 18/20 ou deploy command errado | `NODE_VERSION=22`, deploy command vazio |
 | Build falha no Sharp | Node antigo | `NODE_VERSION=22` |
 | Sitemap com URL errada | `SITE_URL` ausente | Definir `https://oquefaz.app.br` e redeploy |

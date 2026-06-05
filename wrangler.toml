@@ -1,5 +1,10 @@
-# Cloudflare Pages — site estático Astro (output: dist)
-# Usado se o projeto for criado via Workers/Pages com deploy por Git.
+# Site estático Astro — deploy via Workers (assets) ou Pages (output dir).
 name = "oquefazer"
 compatibility_date = "2024-09-23"
+
+# Workers: wrangler deploy publica arquivos de dist/
+[assets]
+directory = "./dist"
+
+# Pages (se migrar para Pages + Git sem deploy command)
 pages_build_output_dir = "./dist"
