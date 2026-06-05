@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "deploy:cf": "wrangler deploy",
     "preview": "astro preview",
     "astro": "astro",
     "lint:seo": "node scripts/lint-seo.mjs",
@@ -42,6 +43,7 @@
   "devDependencies": {
     "node-html-parser": "^7.1.0",
     "png-to-ico": "^3.0.1",
-    "turndown": "^7.2.4"
+    "turndown": "^7.2.4",
+    "wrangler": "^4.14.0"
   }
 }

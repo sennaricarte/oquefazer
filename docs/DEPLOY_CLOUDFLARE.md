@@ -161,9 +161,19 @@ Se aparecer **"Running custom build 'npm run build' failed"** e referência a `w
 2. **Tipo de projeto** — para site estático Astro, use **Pages** (não Workers com SSR):
    - **Build command:** `npm run build`
    - **Build output directory:** `dist`
-   - **Deploy command:** deixe **vazio** (não use `npx wrangler deploy`)
+   - **Deploy command:** deixe **vazio** (não use `wrangler deploy`)
 3. **Install command** (avançado, opcional): `npm ci` em vez de `npm install`
 4. O repositório inclui `wrangler.toml` com `pages_build_output_dir = "./dist"` para fluxos que exigem Wrangler.
+
+### Workers com Git (seu caso atual)
+
+| Campo | Valor exato (copiar) |
+|-------|----------------------|
+| Comando da build | `npm run build` |
+| Comando de implantação | `npm run deploy:cf` |
+| Diretório raiz | `/` |
+
+> Use `npm run deploy:cf` em vez de `npx wrangler deploy` — evita typo (`px` sem o `n`).
 
 > Build local leva **~10 min** (280 posts + Sharp). Na Cloudflare, espere 8–15 min. Se falhar antes de 2 min, quase sempre é Node ou comando de deploy errado.
 
