@@ -133,17 +133,21 @@ const topCategories = tagStats
 		font-size: 0.875rem;
 		font-weight: 600;
 		text-decoration: none;
-		color: #99f6e4;
+		color: var(--color-accent-contrast);
 	}
 
 	.mag-widget__link:hover {
 		text-decoration: underline;
 	}
 
+	.mag-widget--about .mag-widget__link {
+		color: var(--color-on-dark-link);
+	}
+
 	.mag-widget__link--secondary {
 		display: inline-block;
 		margin-top: 0.5rem;
-		color: #cbd5e1;
+		color: var(--color-on-dark-muted);
 	}
 
 	.mag-widget__posts {

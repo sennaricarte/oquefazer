@@ -6,6 +6,13 @@
 	--color-brand-muted: #ccfbf1;
 	--color-brand-subtle: #f0fdfa;
 	--color-accent: #ea580c;
+	/* Links em fundo claro (≥ 4.5:1 sobre #fff) */
+	--color-accent-contrast: #c2410c;
+	/* Fundos accent com texto branco (≥ 4.5:1) */
+	--color-accent-strong: #9a3412;
+	/* Links em fundo escuro */
+	--color-on-dark-link: #5eead4;
+	--color-on-dark-muted: #94a3b8;
 	--color-dark: #0f172a;
 	--color-text: #0f172a;
 	--color-text-soft: #334155;
@@ -47,7 +54,7 @@ body {
 }
 
 .link-brand {
-	color: var(--color-accent);
+	color: var(--color-accent-contrast);
 	font-weight: 600;
 	text-decoration: none;
 }

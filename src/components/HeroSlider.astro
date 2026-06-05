@@ -22,6 +22,9 @@ if (slides.length === 0) {
 			<article
 				class="hero-slide"
 				id={`hero-slide-${index}`}
+				role="tabpanel"
+				aria-labelledby={`hero-tab-${index}`}
+				aria-hidden={index !== 0}
 				style={index === 0 ? undefined : 'display:none'}
 				data-hero-slide={index}
 			>
@@ -54,25 +57,25 @@ if (slides.length === 0) {
 	</div>
 
 	{slides.length > 1 && (
-		<ul class="hero-slider__thumbs" role="tablist" aria-label="Selecionar destaque">
+		<div class="hero-slider__thumbs" role="tablist" aria-label="Selecionar destaque" aria-orientation="horizontal">
 			{slides.map((post, index) => (
-				<li>
-					<button
-						type="button"
-						class="hero-thumb"
-						role="tab"
-						aria-selected={index === 0}
-						aria-controls={`hero-slide-${index}`}
-						data-hero-thumb={index}
-					>
-						<span class="hero-thumb__title">{post.data.title}</span>
-						<time datetime={post.data.pubDate.toISOString()}>
-							{formatPostDate(post.data.pubDate)}
-						</time>
-					</button>
-				</li>
+				<button
+					type="button"
+					class="hero-thumb"
+					id={`hero-tab-${index}`}
+					role="tab"
+					aria-selected={index === 0}
+					aria-controls={`hero-slide-${index}`}
+					tabindex={index === 0 ? 0 : -1}
+					data-hero-thumb={index}
+				>
+					<span class="hero-thumb__title">{post.data.title}</span>
+					<time datetime={post.data.pubDate.toISOString()}>
+						{formatPostDate(post.data.pubDate)}
+					</time>
+				</button>
 			))}
-		</ul>
+		</div>
 	)}
 </section>
 
@@ -82,10 +85,15 @@ if (slides.length === 0) {
 
 	function showSlide(index: number) {
 		slides.forEach((slide, i) => {
-			(slide as HTMLElement).style.display = i === index ? '' : 'none';
+			const el = slide as HTMLElement;
+			const active = i === index;
+			el.style.display = active ? '' : 'none';
+			el.setAttribute('aria-hidden', active ? 'false' : 'true');
 		});
 		thumbs.forEach((thumb, i) => {
-			thumb.setAttribute('aria-selected', i === index ? 'true' : 'false');
+			const active = i === index;
+			thumb.setAttribute('aria-selected', active ? 'true' : 'false');
+			thumb.setAttribute('tabindex', active ? '0' : '-1');
 		});
 	}
 
@@ -172,7 +180,7 @@ if (slides.length === 0) {
 		font-weight: 700;
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
-		background: var(--color-accent);
+		background: var(--color-accent-strong);
 		color: #fff;
 	}
 
@@ -219,7 +227,6 @@ if (slides.length === 0) {
 		gap: 0;
 		margin: 0;
 		padding: 0;
-		list-style: none;
 		border-top: 1px solid rgba(255, 255, 255, 0.12);
 	}
 
@@ -238,12 +245,12 @@ if (slides.length === 0) {
 		font: inherit;
 	}
 
-	.hero-thumb:last-child {
+	.hero-thumb:last-of-type {
 		border-right: 0;
 	}
 
 	.hero-thumb[aria-selected='true'] {
-		background: var(--color-accent);
+		background: var(--color-accent-strong);
 		color: #fff;
 	}
 
@@ -259,6 +266,10 @@ if (slides.length === 0) {
 
 	.hero-thumb time {
 		font-size: 0.6875rem;
-		opacity: 0.85;
+		color: #94a3b8;
+	}
+
+	.hero-thumb[aria-selected='true'] time {
+		color: #fff;
 	}
 </style>
