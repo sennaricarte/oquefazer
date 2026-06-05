@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-build:
+    runs-on: ubuntu-latest
+    env:
+      SITE_URL: https://oquefaz.app.br
+      SITE_NAME: O Que Faz
+      PUBLIC_BLOG_NAME: O Que Faz
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci
+
+      - name: Lint SEO dos posts
+        run: npm run lint:seo
+
+      - name: Build Astro
+        run: npm run build
