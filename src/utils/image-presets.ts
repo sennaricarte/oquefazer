@@ -25,5 +25,5 @@ export function resolveImageQuality(
 	if ('qualityLazy' in preset) {
 		return preset.qualityLazy;
 	}
-	return loading === 'eager' ? 62 : 50;
+	return loading === 'eager' ? 44 : 38;
 }
