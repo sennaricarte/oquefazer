@@ -18,8 +18,10 @@ pnpm-debug.log*
 .env.production
 .env.local
 
-# editor / local
-.cursor/
+# editor / local (mantém regras do projeto)
+.cursor/*
+!.cursor/rules/
+!.cursor/rules/**
 
 # macOS-specific files
 .DS_Store

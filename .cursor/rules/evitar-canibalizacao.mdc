@@ -1,0 +1,39 @@
+---
+description: Antes de criar artigo ou texto sobre profissão, verificar conteúdo existente no blog (anti-canibalização SEO)
+alwaysApply: true
+---
+
+# Evitar canibalização de conteúdo — O Que Faz
+
+Sempre que o usuário pedir para **escrever, gerar ou criar** um novo artigo, post, guia ou texto sobre uma **profissão**, **palavra-chave** ou **“o que faz…”**, faça isto **antes** de redigir ou criar arquivos:
+
+## 1. Verificar o blog (obrigatório)
+
+Execute no terminal:
+
+```bash
+npm run check:topic -- "TERMO ou profissão informada pelo usuário"
+```
+
+Alternativa: buscar em `src/content/blog/` por slug/título relacionados (`grep`, `Glob`, leitura de MDX).
+
+## 2. Interpretar o resultado
+
+| Situação | Ação |
+|----------|------|
+| **CONFLITO DIRETO** (mesmo slug, mesma profissão, título já cobre o tema) | **Não criar** novo MDX. Informar URLs existentes. Oferecer: atualizar o post, expandir seção, ou ângulo novo só se o usuário confirmar. |
+| **Posts similares (alta/média)** | Apresentar lista com links `/blog/{slug}`. Perguntar ângulo diferenciado ou seguir só com confirmação explícita. |
+| **Nenhum conflito** | Seguir fluxo em `.cursor/rules/gerar-artigo-blog.mdc`. |
+
+## 3. Na resposta ao usuário
+
+- Citar posts existentes com link previsto (`/blog/{slug}`) e título.
+- Explicar risco de canibalização se houver duplicata.
+- Se houver dois posts sobre a mesma profissão (ex.: `medico` e `o-que-faz-um-medico`), **destacar** e sugerir consolidar ou diferenciar, não um terceiro igual.
+
+## 4. Proibido sem confirmação
+
+- Criar outro artigo “O que faz um X” quando já existir guia ou ficha da profissão **X**.
+- Repetir a mesma intenção de busca com título/slug quase iguais.
+
+Documentação: `docs/ANTI_CANIBALIZACAO.md` · Comando: `npm run check:topic`

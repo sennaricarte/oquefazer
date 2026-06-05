@@ -1,0 +1,99 @@
+---
+description: Fluxo obrigatório ao criar ou redigir artigos do blog O Que Faz (SEO, E-E-A-T, MDX)
+globs: src/content/blog/**/*
+alwaysApply: false
+---
+
+# Gerar novo artigo — O Que Faz
+
+Quando o usuário pedir para **gerar, criar ou escrever um novo artigo/post** (com palavra-chave ou assunto), siga este fluxo na ordem. Responda em **português (pt-BR)**.
+
+## 0. Anti-canibalização (obrigatório, antes de tudo)
+
+1. Rode `npm run check:topic -- "palavra-chave ou profissão"` (ou busque em `src/content/blog/`).
+2. Se houver **conflito direto**: **não crie** novo MDX; informe URLs `/blog/{slug}` existentes e proponha atualizar o post ou um ângulo diferente **só com confirmação do usuário**.
+3. Se houver posts **similares**: liste-os e valide ângulo único antes de redigir.
+4. Detalhes: `docs/ANTI_CANIBALIZACAO.md` e regra `evitar-canibalizacao.mdc`.
+
+## 1. Pesquisa e análise (antes de escrever)
+
+1. Faça **pesquisa ampla** sobre o tema em fontes confiáveis (dados de mercado, órgãos oficiais, referências reconhecidas na área).
+2. Identifique os **sites melhor posicionados no Google** para a palavra-chave/assunto e analise: estrutura, subtópicos, extensão, perguntas que respondem, gaps que podemos preencher.
+3. Mapeie **intenção de busca** (informacional, comparativa, transacional) e subtópicos que o público realmente busca.
+4. Defina **entidades e termos relacionados** para cobertura semântica completa.
+5. Proponha **estrutura completa do artigo** (H1, H2, H3, listas, FAQ se fizer sentido) alinhada às boas práticas do Google — apresente ao usuário antes ou junto do rascunho, se o escopo for grande.
+
+## 2. Identidade e tom do site (O Que Faz)
+
+O site é **O Que Faz** — guia de profissões e carreiras. Tom da marca:
+
+- A dúvida de "o que vou ser quando crescer" não precisa ser um peso.
+- **Missão:** ponte entre dúvida e decisão consciente — rotina real, desafios práticos e oportunidades reais de cada profissão.
+- **Pilares do conteúdo:** Dia a dia real | Capacitação e formação | Mercado de trabalho | Particularidades que ninguém conta na faculdade.
+- **Diferencial:** atualidade (mercado 2026+), dados reais, tendências; não guias genéricos desatualizados.
+- **Público:** estudantes, transição de carreira, curiosos sobre profissões do futuro.
+
+## 3. SEO técnico (obrigatório no MDX)
+
+Respeite o schema em `src/content.config.ts`:
+
+| Campo | Regra |
+|-------|--------|
+| `title` | 10–70 caracteres, palavra-chave natural, atraente |
+| `description` | 50–160 caracteres, persuasiva, com termo principal |
+| `tags` | 2–5 tags (categoria da área + `profissões` ou `artigos` quando couber) |
+| `slug` | legível, sem acentos, kebab-case |
+| `author` | `O Que Faz` ou nome definido no projeto |
+| `draft` | `true` até revisão; avisar o usuário |
+| `heroImage` + `heroImageAlt` | se houver capa, `alt` obrigatório |
+| `cluster` | slug da área (`saude`, `tecnologia`, …) — inferido das tags se omitido |
+| `contentType` | `ficha` \| `guia` \| `artigo` \| `profissao` — ver `docs/CLUSTERS.md` |
+| `relatedProfession` | slug de post complementar (evitar duplicata canibalizada) |
+
+**No corpo do artigo:**
+
+- Um único **H1** (= título; no MDX use `##` como H2, `###` como H3 — o layout já renderiza o H1 do frontmatter).
+- Palavra-chave na **introdução** (primeiras frases), **subtítulos**, corpo e conclusão — **sem keyword stuffing**.
+- Parágrafos curtos, listas, **negrito** em frases-chave, linguagem escaneável.
+- Links internos para `/areas/{cluster}`, `/blog/{slug}` e posts irmãos do mesmo cluster; links externos com contexto e `rel` implícito em MD.
+- Na introdução, linkar o hub da área: `/areas/{cluster}` (ex.: `/areas/saude`).
+- Demonstrar **E-E-A-T:** experiência prática, precisão, fontes quando citar dados salariais/vagas/tendências.
+
+**Imagens:** usar padrão do projeto (`OptimizedImage` / capa via `heroImage`); nunca `<img>` HTML cru em componentes Astro.
+
+**Capa via stock (Pexels / Pixabay):** chaves em `.env` (`PEXELS_API_KEY`, `PIXABAY_API_KEY`). Após criar o MDX:
+
+```bash
+npm run fetch:image -- --query "enfermeiro hospital profissão" --slug enfermeiro
+```
+
+- Baixa para `src/content/blog/{slug}/images/` e atualiza `heroImage` + `heroImageAlt` se o post existir.
+- `--source pexels` ou `pixabay` força um provedor; omitir = Pexels primeiro, Pixabay como fallback.
+- Crédito do fotógrafo fica em `{slug}/images/{arquivo}.meta.json` — incluir linha de crédito no rodapé do artigo quando a licença exigir.
+- Toda imagem baixada fica **pendente** até `npm run images:approve`. Processo completo: `docs/IMAGENS_REVISAO.md`.
+- **Nunca** repetir a mesma imagem no artigo; **nunca** reutilizar capa entre artigos (o `fetch:image` já evita IDs duplicados).
+- Antes de publicar: `npm run review:images -- --slug {slug}` e `npm run lint:images -- --strict`.
+
+## 4. Redação
+
+- Artigo **completo**, informativo, **humanizado**, amigável, às vezes levemente descontraído, fácil de leitura.
+- Conteúdo **original** — não reempacotar concorrentes; trazer perspectiva e blocos que faltam nos top results.
+- Cobrir: o que faz no dia a dia, formação, habilidades, mercado (vagas, setores, faixa salarial quando houver dado confiável), particularidades da profissão.
+- Ao finalizar: rodar mentalmente `npm run lint:seo` (regras de title/description).
+
+## 5. Entrega no repositório
+
+1. Criar arquivo em `src/content/blog/{slug}.mdx` (ou `npm run new:post -- "Título"` e depois preencher).
+2. Buscar capa: `npm run fetch:image -- --query "termo visual da profissão" --slug {slug}`.
+3. Inlines (se necessário): `fetch:image --role inline` com queries **diferentes** por seção; inserir após o H2 correto.
+4. Revisar: `npm run review:images -- --slug {slug}` → aprovar com `npm run images:approve`.
+5. Frontmatter válido + corpo em MDX/Markdown.
+6. Informar URL prevista: `/blog/{slug}`.
+7. Sugerir `npm run lint:seo`, `npm run lint:images -- --strict` e `draft: false` antes de publicar.
+
+## 6. O que NÃO fazer
+
+- **Não canibalizar:** não publicar segundo artigo genérico “o que faz X” se já existir ficha ou guia sobre **X** (ver passo 0).
+- Não inventar salários ou estatísticas sem base; usar faixas e “varia conforme região/experiência” quando incerto.
+- Não copiar texto de concorrentes.
+- Não usar tom de blog de viagens — o nicho é **profissões e carreiras**.
