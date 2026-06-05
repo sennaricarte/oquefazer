@@ -238,6 +238,9 @@ async function main() {
 
 	await downloadImage(meta.url, destPath);
 	const optimized = await optimizeImageFile(destPath, { role });
+	const finalPath = optimized.writtenPath ?? destPath;
+	const finalFileName = path.basename(finalPath);
+	const finalRelPath = `./${slug}/images/${finalFileName}`;
 	console.log(
 		`Otimizada (${role}): ${optimized.width}×${optimized.height}px` +
 			(optimized.resized ? ` — redimensionada de ${optimized.inputWidth}px` : ''),
@@ -245,8 +248,8 @@ async function main() {
 	const alt = buildAltText(meta, args.query);
 	const credit = buildCreditLine(meta);
 
-	writeImageMeta(imagesDir, fileName, {
-		fileName,
+	writeImageMeta(imagesDir, finalFileName, {
+		fileName: finalFileName,
 		slug,
 		role,
 		query: args.query,
@@ -263,17 +266,17 @@ async function main() {
 	syncRegistryFromPosts();
 
 	if (role === 'hero' && fs.existsSync(mdxPath)) {
-		patchMdxFrontmatter(mdxPath, relPath, alt);
+		patchMdxFrontmatter(mdxPath, finalRelPath, alt);
 		console.log(`Frontmatter atualizado: src/content/blog/${slug}.mdx`);
 	} else if (role === 'hero') {
-		console.log(`Post ainda não existe. Adicione:\nheroImage: "${relPath}"\nheroImageAlt: "${alt}"`);
+		console.log(`Post ainda não existe. Adicione:\nheroImage: "${finalRelPath}"\nheroImageAlt: "${alt}"`);
 	} else {
-		console.log(`Inline: insira no MDX após a seção desejada:\n\n![${alt}](${relPath})`);
+		console.log(`Inline: insira no MDX após a seção desejada:\n\n![${alt}](${finalRelPath})`);
 	}
 
-	console.log(`\nSalvo: src/content/blog/${slug}/images/${fileName}`);
+	console.log(`\nSalvo: src/content/blog/${slug}/images/${finalFileName}`);
 	console.log(`Status: pendente de revisão — npm run review:images -- --slug ${slug}`);
-	console.log(`Aprovar: npm run images:approve -- --slug ${slug} --file ${fileName}`);
+	console.log(`Aprovar: npm run images:approve -- --slug ${slug} --file ${finalFileName}`);
 	console.log(`heroImageAlt sugerido: ${alt}`);
 	console.log(`Crédito (rodapé): ${credit}`);
 }

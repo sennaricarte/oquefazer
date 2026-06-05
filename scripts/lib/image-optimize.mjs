@@ -1,6 +1,26 @@
 import fs from 'node:fs';
+import path from 'node:path';
 import sharp from 'sharp';
 import presets from '../../src/data/image-presets.json' with { type: 'json' };
+
+function writeFileAtomic(filePath, data) {
+	fs.mkdirSync(path.dirname(filePath), { recursive: true });
+	const sibling = `${filePath}.opt`;
+	fs.writeFileSync(sibling, data);
+	try {
+		fs.copyFileSync(sibling, filePath);
+		fs.unlinkSync(sibling);
+		return filePath;
+	} catch {
+		try {
+			if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+			fs.renameSync(sibling, filePath);
+			return filePath;
+		} catch {
+			return sibling;
+		}
+	}
+}
 
 /**
  * Redimensiona e comprime imagens baixadas para o tamanho máximo usado no site.
@@ -27,10 +47,11 @@ export async function optimizeImageFile(filePath, { role = 'hero' } = {}) {
 			: pipeline.jpeg({ quality: 82, mozjpeg: true });
 
 	const buffer = await output.toBuffer();
-	fs.writeFileSync(filePath, buffer);
+	const writtenPath = writeFileAtomic(filePath, buffer);
 
-	const outMeta = await sharp(filePath).metadata();
+	const outMeta = await sharp(writtenPath).metadata();
 	return {
+		writtenPath,
 		inputWidth,
 		width: outMeta.width ?? inputWidth,
 		height: outMeta.height ?? meta.height ?? 0,
