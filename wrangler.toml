@@ -1,10 +1,15 @@
-# Site estático Astro — deploy via Workers (assets) ou Pages (output dir).
+# Site estático Astro — deploy via Workers (assets).
 name = "oquefazer"
 compatibility_date = "2024-09-23"
 
-# Workers: wrangler deploy publica arquivos de dist/
+# Domínio de produção — vincula o Worker na implantação (wrangler deploy / Git).
+routes = [
+	{ pattern = "oquefaz.app.br", custom_domain = true },
+	{ pattern = "www.oquefaz.app.br", custom_domain = true },
+]
+
 [assets]
 directory = "./dist"
-
-# Pages (se migrar para Pages + Git sem deploy command)
-pages_build_output_dir = "./dist"
+# Astro usa trailingSlash: never → /blog/slug sem barra final.
+html_handling = "auto-trailing-slash"
+not_found_handling = "404-page"

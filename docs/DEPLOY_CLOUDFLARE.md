@@ -188,6 +188,28 @@ Se aparecer **"Running custom build 'npm run build' failed"** e referência a `w
 | GA não carrega | `PUBLIC_GA_ID` vazio | Preencher variável; só funciona em produção |
 | Preview com URL errada | Preview sem `SITE_URL` | Repetir variáveis na aba **Preview** |
 
+### Só a home abre; imagens quebradas; `/blog/...` dá 404
+
+**Sintoma:** `https://oquefaz.app.br` carrega, mas logo/capas quebram e rotas como `/blog/agronomo` retornam 404 ou `DEPLOYMENT_NOT_FOUND`. Em `*.workers.dev` tudo funciona.
+
+**Causa:** o domínio `oquefaz.app.br` está ligado a **outro** projeto Cloudflare (Pages antigo ou deploy incompleto), não ao Worker `oquefazer` que recebe o `git push`.
+
+**Correção no painel Cloudflare:**
+
+1. **Workers & Pages** → localize o projeto **oquefazer** (Workers).
+2. **Settings → Domains & Routes** → **Add** → `oquefaz.app.br` e `www.oquefaz.app.br`.
+3. Se o domínio já estiver em **outro** projeto Pages/Workers, remova-o lá antes (Custom domains → Remove).
+4. Confirme no Git do Worker:
+   - Build: `npm run build`
+   - Deploy: `npm run deploy:cf`
+   - Variável `SITE_URL=https://oquefaz.app.br`
+5. Aguarde o deploy (~8–15 min) e teste:
+   - `https://oquefaz.app.br/blog/agronomo`
+   - `https://oquefaz.app.br/sitemap-index.xml`
+   - uma imagem `/_astro/...` (deve retornar 200)
+
+**Alternativa recomendada a longo prazo:** migrar para **Cloudflare Pages** (build `npm run build`, output `dist`, **sem** deploy command). Ver seção 1 deste guia.
+
 ---
 
 ## 8. Deploy manual (emergência / teste)
