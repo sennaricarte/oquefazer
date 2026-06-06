@@ -179,6 +179,7 @@ Se aparecer **"Running custom build 'npm run build' failed"** e referência a `w
 
 | Sintoma | Causa provável | Solução |
 |---------|----------------|---------|
+| Deploy falha em `domains/records` | Domínios no painel + `routes` no `wrangler.toml` | Remover `routes` do `wrangler.toml`; domínios só no painel |
 | Deploy falha pedindo `--assets=./dist` ou `[assets]` | Workers sem diretório de assets | `wrangler.toml` com `[assets] directory = "./dist"` |
 | Build falha em < 2 min + wrangler no log | Node 18/20 ou deploy command errado | `NODE_VERSION=22`, deploy command vazio |
 | Build falha no Sharp | Node antigo | `NODE_VERSION=22` |
@@ -197,9 +198,10 @@ Se aparecer **"Running custom build 'npm run build' failed"** e referência a `w
 **Correção no painel Cloudflare:**
 
 1. **Workers & Pages** → localize o projeto **oquefazer** (Workers).
-2. **Settings → Domains & Routes** → **Add** → `oquefaz.app.br` e `www.oquefaz.app.br`.
+2. **Domínios e rotas** → **Adicionar** → `oquefaz.app.br` e `www.oquefaz.app.br` (sem repetir o domínio).
 3. Se o domínio já estiver em **outro** projeto Pages/Workers, remova-o lá antes (Custom domains → Remove).
-4. Confirme no Git do Worker:
+4. **Não** declare `routes` com `custom_domain` no `wrangler.toml` se os domínios já estão no painel — o deploy falha em `domains/records`.
+5. Confirme no Git do Worker:
    - Build: `npm run build`
    - Deploy: `npm run deploy:cf`
    - Variável `SITE_URL=https://oquefaz.app.br`

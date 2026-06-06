@@ -2,14 +2,12 @@
 name = "oquefazer"
 compatibility_date = "2024-09-23"
 
-# Domínio de produção — vincula o Worker na implantação (wrangler deploy / Git).
-routes = [
-	{ pattern = "oquefaz.app.br", custom_domain = true },
-	{ pattern = "www.oquefaz.app.br", custom_domain = true },
-]
+# Domínios customizados: configure só no painel (Domínios e rotas).
+# Não declare routes aqui — o deploy via Git falha ao recriar DNS/domains/records.
+workers_dev = true
+preview_urls = true
 
 [assets]
 directory = "./dist"
-# Astro usa trailingSlash: never → /blog/slug sem barra final.
 html_handling = "auto-trailing-slash"
 not_found_handling = "404-page"
