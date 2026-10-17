@@ -46,6 +46,7 @@ const clusterHub = clusterSlug ? getClusterBySlug(clusterSlug) : undefined;
 	canonicalURL={canonicalPath}
 	ogImage="/og-default.png"
 	ogType="website"
+	noindex={true}
 >
 	<Fragment slot="head">
 		{page.url.prev && <link rel="prev" href={page.url.prev} />}

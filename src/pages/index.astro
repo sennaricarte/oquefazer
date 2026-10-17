@@ -41,7 +41,7 @@ const siteDescription =
 ---
 
 <BaseLayout
-	title="Início"
+	title="Guia de Profissões: o que faz, formação e mercado"
 	description={siteDescription}
 	canonicalURL="/"
 	ogImage="/og-default.png"
@@ -54,6 +54,8 @@ const siteDescription =
 			set:html={JSON.stringify(breadcrumbListJsonLd(breadcrumbItems))}
 		/>
 	</Fragment>
+
+	<h1 class="home-h1">Guia de profissões: o que faz, formação e mercado de trabalho no Brasil</h1>
 
 	<HeroSlider posts={heroPosts} />
 
@@ -170,5 +172,19 @@ const siteDescription =
 			grid-template-columns: repeat(2, 1fr);
 			column-gap: 2rem;
 		}
+	}
+</style>
+
+<style>
+	.home-h1 {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		margin: -1px;
+		padding: 0;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+		border: 0;
 	}
 </style>
