@@ -4,7 +4,7 @@ import { loadEnv } from 'vite';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import BreadcrumbNav from '../components/BreadcrumbNav.astro';
 import logo from '../assets/logo-o-que-faz.png';
-import { getPublishedPosts, getTagStats } from '../utils/blog';
+import { getListedPosts, getTagStats } from '../utils/blog';
 import { breadcrumbListJsonLd } from '../utils/schema';
 import { generateBreadcrumbs, generateOgImageUrl } from '../utils/seo';
 
@@ -14,7 +14,7 @@ const blogName =
 	SITE_NAME || import.meta.env.PUBLIC_BLOG_NAME || import.meta.env.SITE_NAME || 'O Que Faz';
 const siteOrigin = SITE_URL || site.href;
 
-const posts = await getPublishedPosts();
+const posts = await getListedPosts();
 const tagStats = getTagStats(posts);
 const categoryCount = tagStats.filter(
 	({ tag }) => !['artigos', 'profissões', 'profissoes'].includes(tag.toLowerCase()),

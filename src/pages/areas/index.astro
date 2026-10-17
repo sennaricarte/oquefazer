@@ -1,13 +1,13 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import BreadcrumbNav from '../../components/BreadcrumbNav.astro';
-import { getPublishedPosts } from '../../utils/blog';
+import { getListedPosts } from '../../utils/blog';
 import { getClusterPath, getClusterStats, getAreasIndexPath } from '../../utils/clusters';
 import { breadcrumbListJsonLd } from '../../utils/schema';
 import { generateBreadcrumbs } from '../../utils/seo';
 
 const site = Astro.site!;
-const posts = await getPublishedPosts();
+const posts = await getListedPosts();
 const clusterStats = getClusterStats(posts);
 const canonicalPath = getAreasIndexPath();
 const blogName = import.meta.env.PUBLIC_BLOG_NAME ?? 'O Que Faz';

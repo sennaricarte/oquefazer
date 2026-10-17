@@ -5,7 +5,7 @@ import BreadcrumbNav from '../../../components/BreadcrumbNav.astro';
 import {
 	getAllTags,
 	getPostsByTag,
-	getPublishedPosts,
+	getListedPosts,
 	getTagPagePath,
 	getTagPath,
 	getTagsIndexPath,
@@ -16,7 +16,7 @@ import { generateBreadcrumbs } from '../../../utils/seo';
 import { getClusterBySlug, getClusterPath, getClusterSlugForTag } from '../../../utils/clusters';
 
 export async function getStaticPaths({ paginate }) {
-	const posts = await getPublishedPosts();
+	const posts = await getListedPosts();
 	const tags = getAllTags(posts);
 
 	return tags.flatMap((tag) => {

@@ -7,7 +7,7 @@ import MagazineShell from '../../components/MagazineShell.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
 import {
 	getBlogPagePath,
-	getPublishedPosts,
+	getListedPosts,
 	getTagStats,
 } from '../../utils/blog';
 import { calculateReadingTime } from '../../utils/readingTime';
@@ -15,14 +15,14 @@ import { breadcrumbListJsonLd } from '../../utils/schema';
 import { generateBreadcrumbs } from '../../utils/seo';
 
 export async function getStaticPaths({ paginate }) {
-	const posts = await getPublishedPosts();
+	const posts = await getListedPosts();
 	return paginate(posts, { pageSize: 10 });
 }
 
 const { page } = Astro.props;
 const site = Astro.site!;
 const blogName = import.meta.env.PUBLIC_BLOG_NAME ?? 'O Que Faz';
-const allPosts = await getPublishedPosts();
+const allPosts = await getListedPosts();
 const tagStats = getTagStats(allPosts);
 
 const canonicalPath = getBlogPagePath(page.currentPage);

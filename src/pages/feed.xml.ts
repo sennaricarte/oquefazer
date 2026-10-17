@@ -1,11 +1,11 @@
 import type { APIRoute } from 'astro';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { render } from 'astro:content';
-import { absoluteUrl, getPostPath, getPublishedPosts } from '../utils/blog';
+import { absoluteUrl, getPostPath, getListedPosts } from '../utils/blog';
 import { escapeXml, formatRfc822Date, markdownToHtml, wrapCdata } from '../utils/rss';
 
 async function getPostHtml(
-	post: Awaited<ReturnType<typeof getPublishedPosts>>[number],
+	post: Awaited<ReturnType<typeof getListedPosts>>[number],
 	container: Awaited<ReturnType<typeof AstroContainer.create>>,
 ): Promise<string> {
 	if (post.rendered?.html) {
@@ -31,7 +31,7 @@ export const GET: APIRoute = async ({ site }) => {
 		'Guia completo de profissões: o que faz, formação e mercado de trabalho.';
 	const feedUrl = absoluteUrl('/feed.xml', site);
 	const blogUrl = site.href;
-	const posts = (await getPublishedPosts()).slice(0, 20);
+	const posts = (await getListedPosts()).slice(0, 20);
 
 	const container = await AstroContainer.create({
 		astroConfig: {
