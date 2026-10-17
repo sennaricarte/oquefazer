@@ -1,0 +1,21 @@
+---
+description: Fluxo obrigatório ao reescrever uma ficha de profissão existente (P1) do blog O Que Faz
+globs: src/content/blog/**/*
+alwaysApply: false
+---
+
+# Reescrever ficha — O Que Faz
+
+Quando o usuário pedir para **reescrever, melhorar ou atualizar uma ficha existente**, siga `docs/PROMPT_REESCREVER_FICHA.md`. Responda em **pt-BR**.
+
+Resumo das regras:
+
+1. Leia a ficha atual e a linha dela em `docs/PLANO_REESCRITA_P1.csv`.
+2. Pesquise na web com fontes primárias. Registre fonte, URL e data.
+3. **Zero fabricação.** Sem fonte, sem dado. Dúvida vira `[CONFIRMAR]` e nunca vai ao ar.
+4. Não mude slug, `pubDate`, tags nem imagem. Adicione `updatedDate`.
+5. 800–1.200 palavras. Resposta direta de 40–60 palavras no início. FAQ e seção Fontes.
+6. Links internos só para páginas que não estão em `public/_redirects`.
+7. Cargo inexistente no mercado brasileiro: pare e avise.
+8. Saúde, direito e finanças: exigem revisão profissional antes de manter `draft: false`.
+9. Uma ficha por vez. Rode `npm run lint:seo` e `npm run build` antes de entregar.
