@@ -5,6 +5,19 @@ import sitemap from '@astrojs/sitemap';
 
 const projectRoot = path.dirname(fileURLToPath(import.meta.url));
 const blogDir = path.join(projectRoot, 'src/content/blog');
+const redirectsFile = path.join(projectRoot, 'public/_redirects');
+
+/** Origens dos redirects 301 em public/_redirects: não devem aparecer no sitemap. */
+function loadRedirectSources() {
+	if (!fs.existsSync(redirectsFile)) return [];
+	return fs
+		.readFileSync(redirectsFile, 'utf8')
+		.split(/\r?\n/)
+		.map((line) => line.trim())
+		.filter((line) => line && !line.startsWith('#'))
+		.map((line) => line.split(/\s+/)[0])
+		.filter((source) => source.startsWith('/'));
+}
 
 /**
  * @param {string} block
@@ -62,6 +75,10 @@ function buildSitemapMeta(siteUrl) {
 			.filter((post) => post.data.draft || post.data.noindex)
 			.map((post) => new URL(`/blog/${post.id}`, site).href),
 	);
+
+	for (const source of loadRedirectSources()) {
+		excludedUrls.add(new URL(source, site).href);
+	}
 
 	const postLastmod = new Map(
 		posts
@@ -186,6 +203,15 @@ export function createSitemapIntegration(siteUrl) {
 			}
 
 			if (pathname === '/busca') {
+				return false;
+			}
+
+			// Tags são noindex e duplicam os hubs /areas; paginação do blog não tem valor próprio.
+			if (pathname === '/tags' || pathname.startsWith('/tags/')) {
+				return false;
+			}
+
+			if (/^\/blog\/\d+$/.test(pathname)) {
 				return false;
 			}
 

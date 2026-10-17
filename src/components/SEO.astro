@@ -28,7 +28,7 @@ const pageTitle = `${title} | ${blogName}`;
 const metaDescription = truncateDescription(description);
 const canonical = absoluteUrl(canonicalURL);
 const imageUrl = absoluteUrl(ogImage);
-const robotsContent = noindex ? 'noindex, nofollow' : 'index, follow';
+const robotsContent = noindex ? 'noindex, follow' : 'index, follow';
 
 /** Artigos usam BlogPosting apenas no `<head>` da página do post — evita duplicata. */
 const webPageSchema =
