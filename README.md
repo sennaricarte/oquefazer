@@ -24,5 +24,6 @@ Copie `.env.example` para `.env` e preencha as variáveis (sem commitar `.env`).
 - `docs/DEPLOY_CLOUDFLARE.md` — hospedar no Cloudflare Pages (checklist de variáveis)
 - `CHECKLIST_SEO.md` — configurações SEO implementadas
 - `docs/ANTI_CANIBALIZACAO.md` — evitar conteúdo duplicado
+- `docs/PROMPT_REESCREVER_FICHA.md` — reescrita de fichas P1 (fila em `docs/PLANO_REESCRITA_P1.csv`)
 - `docs/IMAGENS_REVISAO.md` — fluxo de capas Pexels/Pixabay
 - `docs/SEARCH_CONSOLE.md` — Google Search Console pós-deploy
