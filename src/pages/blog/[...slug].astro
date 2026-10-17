@@ -354,6 +354,54 @@ const blogPostingJsonLd = {
 		color: #334155;
 	}
 
+	/* Tabelas do Markdown: bordas, cabeçalho destacado, zebra e rolagem horizontal no celular. */
+	.post-content :global(.table-wrap) {
+		max-width: 100%;
+		margin: 1.5rem 0;
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+		border: 1px solid var(--color-border);
+		border-radius: 0.5rem;
+	}
+
+	.post-content :global(.table-wrap table) {
+		width: 100%;
+		min-width: 28rem;
+		border-collapse: collapse;
+		font-size: 0.9375rem;
+		line-height: 1.45;
+	}
+
+	.post-content :global(.table-wrap th),
+	.post-content :global(.table-wrap td) {
+		padding: 0.75rem 1rem;
+		text-align: left;
+		vertical-align: top;
+		color: #334155;
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	.post-content :global(.table-wrap thead th) {
+		background: var(--color-brand);
+		color: #ffffff;
+		font-weight: 700;
+		white-space: nowrap;
+		border-bottom: 0;
+	}
+
+	.post-content :global(.table-wrap tbody tr:nth-child(even) td) {
+		background: var(--color-surface);
+	}
+
+	.post-content :global(.table-wrap tbody tr:last-child td) {
+		border-bottom: 0;
+	}
+
+	.post-content :global(.table-wrap tbody td:first-child) {
+		font-weight: 600;
+		color: var(--color-text);
+	}
+
 	.post-adjacent {
 		display: grid;
 		gap: 1rem;
