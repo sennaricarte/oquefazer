@@ -74,6 +74,15 @@ export async function getPublishedPosts(): Promise<BlogEntry[]> {
 	);
 }
 
+/**
+ * Posts publicados e indexáveis. Use nas listagens (home, hubs, feed, busca, tags).
+ * Posts com `noindex: true` continuam acessíveis pela URL, mas não são divulgados em listas.
+ */
+export async function getListedPosts(): Promise<BlogEntry[]> {
+	const posts = await getPublishedPosts();
+	return posts.filter((post) => !post.data.noindex);
+}
+
 export function getAllTags(posts: BlogEntry[]): string[] {
 	return getTagStats(posts).map(({ tag }) => tag);
 }

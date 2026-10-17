@@ -6,7 +6,7 @@ import MagazineCard from '../components/MagazineCard.astro';
 import MagazineShell from '../components/MagazineShell.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 import {
-	getPublishedPosts,
+	getListedPosts,
 	getTagStats,
 	getPostsByTag,
 } from '../utils/blog';
@@ -16,7 +16,7 @@ import { generateBreadcrumbs } from '../utils/seo';
 
 const site = Astro.site!;
 const blogName = import.meta.env.PUBLIC_BLOG_NAME ?? 'O Que Faz';
-const allPosts = await getPublishedPosts();
+const allPosts = await getListedPosts();
 const tagStats = getTagStats(allPosts);
 
 const heroPosts = [
