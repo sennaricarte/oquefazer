@@ -6,6 +6,7 @@ import mdx from '@astrojs/mdx';
 import partytown from '@astrojs/partytown';
 import { createSitemapIntegration } from './sitemap-integration.mjs';
 import { buildTagRedirects } from './tag-redirects.mjs';
+import rehypeWrapTables from './rehype-wrap-tables.mjs';
 
 const env = loadEnv(process.env.NODE_ENV ?? 'development', process.cwd(), '');
 const { SITE_URL } = env;
@@ -38,7 +39,7 @@ export default defineConfig({
 
 	integrations: [
 		createSitemapIntegration(siteUrl),
-		mdx(),
+		mdx({ rehypePlugins: [rehypeWrapTables] }),
 		partytown({
 			config: {
 				forward: ['dataLayer.push', 'gtag'],
