@@ -671,6 +671,24 @@
       "updatedAt": "2026-11-08T23:32:06.721Z"
     },
     {
+      "id": "desenvolvedor-web:./desenvolvedor-web/images/hero-eeab9784.jpg",
+      "slug": "desenvolvedor-web",
+      "relPath": "./desenvolvedor-web/images/hero-eeab9784.jpg",
+      "role": "hero",
+      "fileName": "hero-eeab9784.jpg",
+      "alt": "MacBook Pro exibindo páginas de um tema de site, com dois monitores ao fundo em uma mesa de trabalho",
+      "title": "Desenvolvedor Web e Webdesigner: o que faz, formação e salário",
+      "contextHeading": "Desenvolvedor Web e Webdesigner: o que faz, formação e salário",
+      "contentHash": "eeab9784b68cb74bc5fbd1d7f8f92e4d04149a9e6d60f273d5838276e1e15ed1",
+      "sourceKey": "pexels:285814",
+      "query": "webdesigner desenvolvedor web",
+      "reviewStatus": "approved",
+      "relevanceScore": 0,
+      "draft": false,
+      "fileExists": true,
+      "updatedAt": "2026-11-19T18:40:29.957Z"
+    },
+    {
       "id": "designer-grafico:./designer-grafico/images/hero-b155dcf1.jpg",
       "slug": "designer-grafico",
       "relPath": "./designer-grafico/images/hero-b155dcf1.jpg",
